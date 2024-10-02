@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Platform } from 'react-native';
 import { AreaInput, Background, Title, Container, Input, SubmitButton, SubmitText, Link, LinkText } from '../SignIn/styles';
 import { useNavigation } from '@react-navigation/native';
@@ -14,8 +14,18 @@ export {
   Title
 } from '../SignIn/styles';
 
+import {AuthContext} from '../../contexts/auth';
+
 export default function SignUpPsi() {
   const navigation = useNavigation();
+
+  const {user} = useContext(AuthContext)
+
+function handleSignUp(){
+  console.log(user.nome)
+}
+
+
 
   return(
     <Background>
@@ -41,7 +51,7 @@ export default function SignUpPsi() {
         <Input placeholder='Senha' />
       </AreaInput>
 
-      <SubmitButton>
+      <SubmitButton onPress={handleSignUp}>
         <SubmitText>Cadastrar</SubmitText>
       </SubmitButton>
 
