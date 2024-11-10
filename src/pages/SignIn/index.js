@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Platform } from 'react-native';
 
 import { 
@@ -17,6 +17,8 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function SignIn(){
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   return(
     <Background>
@@ -32,12 +34,16 @@ export default function SignIn(){
         <AreaInput>
           <Input
             placeholder="Seu email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
         </AreaInput>
 
         <AreaInput>
           <Input
             placeholder="Sua senha"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
         </AreaInput>
 

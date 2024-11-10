@@ -1,5 +1,5 @@
-import React, {useContext} from 'react';
-import { Platform } from 'react-native';
+import React, {useContext, useState} from 'react';
+import { Platform, ActivityIndicator } from 'react-native';
 import { AreaInput, Background, Title, Container, Input, SubmitButton, SubmitText, Link, LinkText } from '../SignIn/styles';
 import { useNavigation } from '@react-navigation/native';
 
@@ -16,13 +16,21 @@ export {
 
 import {AuthContext} from '../../contexts/auth';
 
-export default function SignUpPsi() {
-  const navigation = useNavigation();
+export default function SignUp() {
 
-  const {user} = useContext(AuthContext)
+  const [nome, setNome] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const navigation = useNavigation();
+  const {signUp, loadingAuth} = useContext(AuthContext)
 
 function handleSignUp(){
-  console.log(user.nome)
+  if(nome === '' || email === '' || password === ''){
+    Alert.alert('Preencha todos os campos!')
+    return;
+  }
+  signUp(email, password, nome);
 }
 
 
@@ -36,23 +44,34 @@ function handleSignUp(){
 
 <Title>Conta Paciente</Title>
       <AreaInput>
-        <Input placeholder='Nome' />
+        <Input placeholder='Nome'
+        value = {nome}
+        onChangeText={(text) => setNome(text)}
+         />
+      </AreaInput>
+
+      
+      <AreaInput>
+        <Input placeholder='E-mail'
+          value = {email}
+          onChangeText={(text) => setEmail(text)}
+         />
       </AreaInput>
 
       <AreaInput>
-        <Input placeholder='Idade' />
-      </AreaInput>
-
-      <AreaInput>
-        <Input placeholder='E-mail' />
-      </AreaInput>
-
-      <AreaInput>
-        <Input placeholder='Senha' />
+        <Input placeholder='Senha'
+          value = {password}
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry= {true}
+         />
       </AreaInput>
 
       <SubmitButton onPress={handleSignUp}>
-        <SubmitText>Cadastrar</SubmitText>
+        {loadingAuth ? (
+          <ActivityIndicator size={25} color="#fff" />
+        ) : (
+          <SubmitText>Cadastrar</SubmitText>
+        )}
       </SubmitButton>
 
 

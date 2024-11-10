@@ -12,8 +12,8 @@ export const Container = styled.KeyboardAvoidingView`
 `;
 
 export const Logo = styled.Image`
-width: 150;
-height: 150;
+width: 120px;
+height: 120px;
   margin-bottom: 20px;
 `;
 
@@ -53,12 +53,12 @@ export const Link = styled.TouchableOpacity`
 `;
 
 export const LinkText = styled.Text`
-  color: #171717;`
+  color: #171717;
+`;
 
 export const Title = styled.Text`
-  font-size: 30;
+  font-size: 30px;
   font-weight: bold;
   color: #3b3dbf;
-  margin-bottom: 20px;`
-
-;
+  margin-bottom: 20px;
+`;
