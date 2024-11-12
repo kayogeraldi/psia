@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Home from '../pages/Home';
 import Registros from '../pages/Registros';
-import Settings from '../pages/Ajustes';
+import SettingsRoutes from './settings.routes';
 
 const Tab = createBottomTabNavigator();
 
@@ -59,8 +59,9 @@ function AppRoutes(){
 
       <Tab.Screen 
         name="Ajustes" 
-        component={Settings}
+        component={SettingsRoutes}
         options={{
+          headerShown: false,
           tabBarLabel: 'Ajustes',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-outline" size={size} color={color} />
