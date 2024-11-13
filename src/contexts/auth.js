@@ -5,11 +5,39 @@ export const AuthContext = createContext({});
 
 import api from '../services/api'
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 function AuthProvider({ children }){
   const [user, setUser] = useState(null); 
   const [loadingAuth, setLoadingAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
 
  const navigation = useNavigation();
+
+  useEffect(() => {
+    async function loadStorageData(){
+      const storageUser = await AsyncStorage.getItem('@psiapp');
+
+      if(storageUser){
+        const response = await api.get('/me', {
+          headers: {
+            Authorization: `Bearer ${storageUser}`
+          }
+        })
+        .catch(() => {
+          setUser(null);
+        })
+
+        api.defaults.headers.Authorization = `Bearer ${storageUser}`;
+        setUser(response.data);
+        setLoading(false);
+      }
+      setLoading(false);
+    }
+
+    loadStorageData();
+  }, []);
 
 
   async function signUp(email, password, nome){
@@ -45,7 +73,12 @@ function AuthProvider({ children }){
         token,
         email,
       };
+
+      await AsyncStorage.setItem('@psiapp', token);
+
+
       api.defaults.headers.Authorization = `Bearer ${token}`;
+
       setUser({
         id,
         name,
@@ -59,7 +92,7 @@ function AuthProvider({ children }){
   }
 
   return(
-    <AuthContext.Provider value={{ signed: !!user, user, signUp, signIn, loadingAuth }}>
+    <AuthContext.Provider value={{ signed: !!user, user, signUp, signIn, loadingAuth, loading }}>
       {children}
     </AuthContext.Provider>
   )
