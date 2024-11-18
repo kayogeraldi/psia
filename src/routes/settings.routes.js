@@ -4,6 +4,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from '../pages/Ajustes';
 import Profile from '../pages/Profile';
 import Notifications from '../pages/Notificações';
+import Pergunta1 from '../pages/RPD/Pergunta1';
+import Pergunta2 from '../pages/RPD/Pergunta2';
+import Pergunta3 from '../pages/RPD/Pergunta3';
+import Pergunta4 from '../pages/RPD/Pergunta4';
+import Pergunta5 from '../pages/RPD/Pergunta5';
+
 const SettingsStack = createNativeStackNavigator();
 
 function SettingsRoutes() {
@@ -30,6 +36,43 @@ function SettingsRoutes() {
           title: 'Notificações'
         }}
       />
+      <SettingsStack.Screen 
+        name="Pergunta1"
+        component={Pergunta1}
+        options={{
+          title: 'Pergunta 1'
+        }}
+      />
+      <SettingsStack.Screen 
+        name="Pergunta2"
+        component={Pergunta2}
+        options={{
+          title: 'Pergunta 2'
+        }}
+      />
+      <SettingsStack.Screen 
+        name="Pergunta3"
+        component={Pergunta3}
+        options={{
+          title: 'Pergunta 3'
+        }}
+      />  
+      <SettingsStack.Screen 
+        name="Pergunta4"
+        component={Pergunta4}
+        options={{
+          title: 'Pergunta 4'
+        }}
+      />
+      <SettingsStack.Screen 
+        name="Pergunta5"
+        component={Pergunta5}
+        options={{
+          title: 'Pergunta 5'
+        }}
+      />
+
+
     </SettingsStack.Navigator>
   );
 }
