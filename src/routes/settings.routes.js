@@ -9,6 +9,7 @@ import Pergunta2 from '../pages/RPD/Pergunta2';
 import Pergunta3 from '../pages/RPD/Pergunta3';
 import Pergunta4 from '../pages/RPD/Pergunta4';
 import Pergunta5 from '../pages/RPD/Pergunta5';
+import Pergunta6 from '../pages/RPD/Pergunta6';
 
 const SettingsStack = createNativeStackNavigator();
 
@@ -69,6 +70,13 @@ function SettingsRoutes() {
         component={Pergunta5}
         options={{
           title: 'Pergunta 5'
+        }}
+      />
+      <SettingsStack.Screen 
+        name="Pergunta6"
+        component={Pergunta6}
+        options={{
+          title: 'Pergunta 6'
         }}
       />
 

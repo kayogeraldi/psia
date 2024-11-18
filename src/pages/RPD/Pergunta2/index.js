@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { useQuiz } from '../../../contexts/QuizContext';
 
 export default function Pergunta2(){
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [texto, setTexto] = useState('');
+  const { quizData, updateQuizData } = useQuiz();
+  const { texto } = quizData.pergunta2;
+
+  const handleTextChange = (newText) => {
+    updateQuizData('pergunta2', { texto: newText });
+  };
 
   const handleCancel = () => {
     setModalVisible(true);
@@ -20,9 +26,10 @@ export default function Pergunta2(){
   return(
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>O que aconteceu?</Text>
+        <Text style={styles.title}>Motivos</Text>
         <Text style={styles.subtitle}>
-          Descreva a situação que gerou o pensamento ou emoção
+        Descreva a situação que lhe causou desconforto. Anote o local, 
+        momento, com quem estava, o que fazia, o que falavam e etc.
         </Text>
         
         <View style={styles.inputContainer}>
@@ -33,7 +40,7 @@ export default function Pergunta2(){
             multiline={true}
             numberOfLines={4}
             value={texto}
-            onChangeText={setTexto}
+            onChangeText={handleTextChange}
             textAlignVertical="top"
           />
         </View>

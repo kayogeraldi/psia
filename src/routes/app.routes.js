@@ -11,6 +11,8 @@ import Pergunta2 from '../pages/RPD/Pergunta2';
 import Pergunta3 from '../pages/RPD/Pergunta3';
 import Pergunta4 from '../pages/RPD/Pergunta4';
 import Pergunta5 from '../pages/RPD/Pergunta5';
+import Pergunta6 from '../pages/RPD/Pergunta6';
+import { QuizProvider } from '../contexts/QuizContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -59,82 +61,92 @@ function QuizStack() {
           title: 'Pergunta 5'
         }}
       />
+      <Stack.Screen 
+        name="Pergunta6" 
+        component={Pergunta6}
+        options={{
+          headerShown: false,
+          title: 'Pergunta 6'
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
 function AppRoutes(){
   return(
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: true,
-        tabBarStyle: {
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          height: 70,
-          position: 'absolute',
-          bottom: 16,
-          right: 16,
-          left: 16,
-          elevation: 0,
-          shadowColor: 'transparent',
-        },
-        tabBarItemStyle: {
-          margin: 6,
-          borderRadius: 24,
-          height: 50,
-        },
-        tabBarActiveTintColor: '#FFF',
-        tabBarInactiveTintColor: '#FFF',
-        tabBarActiveBackgroundColor: '#4B0082',
-        tabBarInactiveBackgroundColor: '#8B008B',
-      }}
-    >
-      <Tab.Screen 
-        name="Registros" 
-        component={Registros}
-        options={{
-          tabBarLabel: 'Registros',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="document-text-outline" size={size} color={color} />
-          ),
+    <QuizProvider>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: true,
+          tabBarStyle: {
+            backgroundColor: 'transparent',
+            borderTopWidth: 0,
+            height: 70,
+            position: 'absolute',
+            bottom: 16,
+            right: 16,
+            left: 16,
+            elevation: 0,
+            shadowColor: 'transparent',
+          },
+          tabBarItemStyle: {
+            margin: 6,
+            borderRadius: 24,
+            height: 50,
+          },
+          tabBarActiveTintColor: '#FFF',
+          tabBarInactiveTintColor: '#FFF',
+          tabBarActiveBackgroundColor: '#4B0082',
+          tabBarInactiveBackgroundColor: '#8B008B',
         }}
-      />
-      
-      <Tab.Screen 
-        name="Home" 
-        component={Home}
-        options={{
-          headerShown: false,
-          tabBarLabel: 'Início',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
-      />
+      >
+        <Tab.Screen 
+          name="Registros" 
+          component={Registros}
+          options={{
+            tabBarLabel: 'Registros',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="document-text-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        
+        <Tab.Screen 
+          name="Home" 
+          component={Home}
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Início',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home-outline" size={size} color={color} />
+            ),
+          }}
+        />
 
-      <Tab.Screen 
-        name="Ajustes" 
-        component={SettingsRoutes}
-        options={{
-          headerShown: false,
-          tabBarLabel: 'Ajustes',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
-          ),
-        }}
-      />
+        <Tab.Screen 
+          name="Ajustes" 
+          component={SettingsRoutes}
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Ajustes',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="settings-outline" size={size} color={color} />
+            ),
+          }}
+        />
 
-      <Tab.Screen 
-        name="Quiz"
-        component={QuizStack}
-        options={{
-          headerShown: false,
-          tabBarButton: () => null, 
-          tabBarStyle: { display: 'none' }  
-        }}
-      />
-    </Tab.Navigator>
+        <Tab.Screen 
+          name="Quiz"
+          component={QuizStack}
+          options={{
+            headerShown: false,
+            tabBarButton: () => null, 
+            tabBarStyle: { display: 'none' }  
+          }}
+        />
+      </Tab.Navigator>
+    </QuizProvider>
   )
 }
 

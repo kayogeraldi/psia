@@ -4,12 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Checkbox } from 'react-native-paper';  // Se não tiver, instale: npm install react-native-paper
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { useQuiz } from '../../../contexts/QuizContext';
 
 export default function Pergunta1(){
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [isToday, setIsToday] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const { quizData, updateQuizData, clearQuizData } = useQuiz();
+  const { date, isToday } = quizData.pergunta1;
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleCancel = () => {
@@ -17,23 +18,27 @@ export default function Pergunta1(){
   };
 
   const handleConfirmCancel = () => {
+    clearQuizData();
     setModalVisible(false);
     navigation.navigate('Home');
   };
 
   const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
     if (selectedDate) {
-      setDate(selectedDate);
-      setIsToday(false);
+      updateQuizData('pergunta1', { 
+        date: selectedDate,
+        isToday: false 
+      });
     }
+    setShowDatePicker(false);
   };
 
   const handleTodayCheck = () => {
-    setIsToday(!isToday);
-    if (!isToday) {
-      setDate(new Date());
-    }
+    const newIsToday = !isToday;
+    updateQuizData('pergunta1', {
+      isToday: newIsToday,
+      date: newIsToday ? new Date() : date
+    });
   };
 
   return(

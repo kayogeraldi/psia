@@ -1,12 +1,42 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { useQuiz } from '../../../contexts/QuizContext';
 
 export default function Pergunta3(){
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [texto, setTexto] = useState('');
+  const { quizData, updateQuizData } = useQuiz();
+  const { 
+    sentimentosList, 
+    observacoes, 
+    selectedSentimento, 
+    selectedIntensidade 
+  } = quizData.pergunta3;
+
+  const sentimentos = [
+    'Alegria', 'Tristeza', 'Raiva', 'Medo', 'Ansiedade',
+    'Culpa', 'Vergonha', 'Frustração', 'Solidão', 'Esperança'
+  ];
+
+  const intensidades = Array.from({length: 11}, (_, i) => i.toString());
+
+  const handleAddSentimento = () => {
+    if (selectedSentimento && selectedIntensidade) {
+      const novoSentimento = {
+        sentimento: selectedSentimento,
+        intensidade: selectedIntensidade
+      };
+      
+      updateQuizData('pergunta3', {
+        sentimentosList: [...sentimentosList, novoSentimento],
+        selectedSentimento: '',
+        selectedIntensidade: '1'
+      });
+    }
+  };
 
   const handleCancel = () => {
     setModalVisible(true);
@@ -14,30 +44,83 @@ export default function Pergunta3(){
 
   const handleConfirmCancel = () => {
     setModalVisible(false);
+    // Limpar dados ao cancelar
+    updateQuizData('pergunta3', {
+      sentimentosList: [],
+      observacoes: '',
+      selectedSentimento: '',
+      selectedIntensidade: '1'
+    });
     navigation.navigate('Home');
   };
 
   return(
     <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>O que aconteceu?</Text>
-        <Text style={styles.subtitle}>
-          Descreva a situação que gerou o pensamento ou emoção
-        </Text>
-        
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite aqui..."
-            placeholderTextColor="#999"
-            multiline={true}
-            numberOfLines={4}
-            value={texto}
-            onChangeText={setTexto}
-            textAlignVertical="top"
-          />
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
+          <Text style={styles.title}>Sentimentos</Text>
+          <Text style={styles.subtitle}>
+            Especifique as emoções, sentimentos ou sensações e
+            avalie a intensidade utilizando a escala de 0 a 10.
+          </Text>
+          
+          <View style={styles.pickerContainer}>
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={selectedSentimento}
+                onValueChange={(value) => updateQuizData('pergunta3', { selectedSentimento: value })}
+                style={styles.picker}
+              >
+                <Picker.Item label="Selecione" value="" />
+                {sentimentos.map((sentimento) => (
+                  <Picker.Item key={sentimento} label={sentimento} value={sentimento} />
+                ))}
+              </Picker>
+            </View>
+
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={selectedIntensidade}
+                onValueChange={(value) => updateQuizData('pergunta3', { selectedIntensidade: value })}
+                style={styles.picker}
+              >
+                {intensidades.map((num) => (
+                  <Picker.Item key={num} label={num} value={num} />
+                ))}
+              </Picker>
+            </View>
+          </View>
+
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={handleAddSentimento}
+          >
+            <Text style={styles.addButtonText}>+ Adicionar Sentimento</Text>
+          </TouchableOpacity>
+
+          {/* Lista de sentimentos adicionados */}
+          {sentimentosList.map((item, index) => (
+            <View key={index} style={styles.sentimentoItem}>
+              <Text style={styles.sentimentoText}>
+                {item.sentimento} - Intensidade: {item.intensidade}
+              </Text>
+            </View>
+          ))}
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Observações adicionais..."
+              placeholderTextColor="#999"
+              multiline={true}
+              numberOfLines={4}
+              value={observacoes}
+              onChangeText={(text) => updateQuizData('pergunta3', { observacoes: text })}
+              textAlignVertical="top"
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
 
       <View style={styles.footer}>
         <View style={styles.buttonRow}>
@@ -149,5 +232,53 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '50%',
     alignItems: 'center'
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%'
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 10
+  },
+  pickerWrapper: {
+    width: '48%',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    overflow: 'hidden'
+  },
+  picker: {
+    height: 50,
+    width: '100%'
+  },
+  addButton: {
+    backgroundColor: '#4CAF50',
+    padding: 12,
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20
+  },
+  addButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  sentimentoItem: {
+    backgroundColor: '#f8f8f8',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ddd'
+  },
+  sentimentoText: {
+    fontSize: 16,
+    color: '#333'
   }
 });
