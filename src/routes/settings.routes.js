@@ -10,7 +10,7 @@ import Pergunta3 from '../pages/RPD/Pergunta3';
 import Pergunta4 from '../pages/RPD/Pergunta4';
 import Pergunta5 from '../pages/RPD/Pergunta5';
 import Pergunta6 from '../pages/RPD/Pergunta6';
-
+import Pacientes from '../pages/pacientes';
 const SettingsStack = createNativeStackNavigator();
 
 function SettingsRoutes() {
@@ -21,6 +21,13 @@ function SettingsRoutes() {
         component={Settings}
         options={{
           title: 'Ajustes'
+        }}
+      />
+      <SettingsStack.Screen 
+        name="Pacientes"
+        component={Pacientes}
+        options={{
+          title: 'Pacientes'
         }}
       />
       <SettingsStack.Screen 

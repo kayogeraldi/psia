@@ -31,7 +31,7 @@ export default function Settings() {
         <Text style={styles.buttonText}>Ajuda e Suporte</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Pacientes')}>
         <Text style={styles.buttonText}>Sobre</Text>
       </TouchableOpacity>
     </View>

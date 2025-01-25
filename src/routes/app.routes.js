@@ -17,7 +17,6 @@ import { QuizProvider } from '../contexts/QuizContext';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Função para criar o stack de perguntas (sem tab)
 function QuizStack() {
   return (
     <Stack.Navigator>

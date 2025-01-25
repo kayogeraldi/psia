@@ -11,6 +11,8 @@ export default function Profile() {
       <Text>Tela de Perfil</Text> 
       <Text> Nome: {user.name}</Text>
       <Text> Email: {user.email}</Text>
+      <Text> Telefone: {user.phone}</Text>
+      <Text> Psicólogo: {user.psicologo}</Text>
       <TouchableOpacity style={styles.button} onPress={() => signOut()}>
         <Feather name="log-out" size={22} color="#FFF" />
         <Text style={styles.buttonText}>Sair</Text>
