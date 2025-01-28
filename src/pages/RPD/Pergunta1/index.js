@@ -107,6 +107,8 @@ export default function Pergunta1(){
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onConfirm={handleConfirmCancel}
+        confirmText="Sim"
+        cancelText="Não"
         message="Tem certeza que deseja cancelar o quiz?"
       />
     </View>

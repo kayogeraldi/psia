@@ -1,23 +1,92 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
+import RegistroDetailModal from '../../components/RegistroDetailModal'; // Ajuste o caminho conforme necessário
 
 export default function Pacientes({ navigation }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPaciente, setSelectedPaciente] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  
   const [pacientes, setPacientes] = useState([
-    // Exemplo de lista de pacientes - você deve substituir por sua lógica de dados real
-    { id: '1', nome: 'João Silva' },
-    { id: '2', nome: 'Maria Souza' },
-    { id: '3', nome: 'Pedro Santos' },
+    { 
+      id: '1', 
+      nome: 'João Silva',
+      ultimaAtualizacao: '2023-12-10T10:30:00Z',
+      temNotificacao: true,
+      registros: [
+        {
+          id: 'r1',
+          data: new Date().toISOString(),
+          situacao: 'Exemplo de situação para João',
+          sentimentos: [
+            { sentimento: 'Ansiedade', intensidade: 7 }
+          ],
+          pensamentosAutomaticos: 'Pensamentos automáticos de exemplo',
+          pensamentosAdaptativos: 'Pensamentos adaptativos de exemplo',
+          reavaliacao: {
+            texto: 'Reavaliação de exemplo',
+            reavaliacoes: [5]
+          }
+        }
+      ]
+    },
+    { 
+      id: '2', 
+      nome: 'Maria Souza',
+      registros: []
+    },
+    { 
+      id: '3', 
+      nome: 'Pedro Santos',
+      registros: []
+    },
   ]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
 
   const filteredPacientes = pacientes.filter(paciente => 
     paciente.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handlePacientePress = (paciente) => {
+    // Remove a notificação quando o paciente é clicado
+    const updatedPacientes = pacientes.map(p => 
+      p.id === paciente.id ? { ...p, temNotificacao: false } : p
+    );
+    setPacientes(updatedPacientes);
+
+    if (paciente.registros && paciente.registros.length > 0) {
+      setSelectedPaciente(paciente.registros[0]);
+      setIsModalVisible(true);
+    } else {
+      alert('Não há registros para este paciente');
+    }
+  };
+
   const renderPaciente = ({ item }) => (
-    <TouchableOpacity style={styles.pacienteItem}>
-      <Text style={styles.pacienteNome}>{item.nome}</Text>
+    <TouchableOpacity 
+      style={styles.pacienteItem}
+      onPress={() => handlePacientePress(item)}
+    >
+      <View style={styles.pacienteNomeContainer}>
+        <Text style={styles.pacienteNome}>{item.nome}</Text>
+        <View style={styles.pacienteInfoContainer}>
+          {item.temNotificacao && (
+            <View style={styles.notificationDot} />
+          )}
+          <Text style={styles.ultimaAtualizacaoText}>
+            {formatDate(item.ultimaAtualizacao)}
+          </Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 
@@ -40,6 +109,17 @@ export default function Pacientes({ navigation }) {
         ListEmptyComponent={
           <Text style={styles.emptyListText}>Nenhum paciente encontrado</Text>
         }
+      />
+
+      {/* Modal para detalhes do registro */}
+      <RegistroDetailModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        registro={selectedPaciente}
+        onDelete={() => {
+          // Lógica para deletar registro
+          setIsModalVisible(false);
+        }}
       />
 
       <TouchableOpacity 
@@ -83,6 +163,27 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+  },
+  pacienteNomeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  pacienteInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  notificationDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#c62c36',
+    marginRight: 8,
+  },
+  ultimaAtualizacaoText: {
+    color: '#666',
+    fontSize: 12,
   },
   pacienteNome: {
     fontSize: 16,

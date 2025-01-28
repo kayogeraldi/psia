@@ -7,13 +7,13 @@ export default function Home(){
 
   return(
     <View style={styles.container}>
-      <Text style={styles.title}>Bem-vindo ao Quiz!</Text>
+      <Text style={styles.title}>Bem-vindo!</Text>
       
       <TouchableOpacity 
         style={styles.button}
         onPress={() => navigation.navigate('Quiz', { screen: 'Pergunta1' })}
       >
-        <Text style={styles.buttonText}>Começar Quiz</Text>
+        <Text style={styles.buttonText}>Responder RPD</Text>
       </TouchableOpacity>
     </View>
   )
