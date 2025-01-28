@@ -41,6 +41,11 @@ export default function Pacientes({ navigation }) {
       nome: 'Pedro Santos',
       registros: []
     },
+    { 
+      id: '4', 
+      nome: 'Ana Oliveira',
+      registros: []
+    },
   ]);
 
   const formatDate = (dateString) => {
