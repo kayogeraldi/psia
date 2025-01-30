@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#808080'
   },
   buttonProximo: {
-    backgroundColor: '#3b3dbf'
+    backgroundColor: '#7673FF'
   },
   buttonText: {
     color: '#FFF',

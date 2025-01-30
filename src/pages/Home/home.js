@@ -18,6 +18,7 @@ export default function Home(){
     </View>
   )
 }
+//7673FF
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   button: {
-    backgroundColor: '#3b3dbf',
+    backgroundColor: '#7673FF',
     padding: 15,
     borderRadius: 10,
     width: '80%',

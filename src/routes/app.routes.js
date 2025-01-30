@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet } from 'react-native';
 
 import Home from '../pages/Home/home';
 import Registros from '../pages/Registros/registros';
@@ -81,6 +82,17 @@ function QuizStack() {
   );
 }
 
+function CustomTabBarIcon({ name, color, size, label }) {
+  return (
+    <View style={styles.tabBarItemContainer}>
+      <View style={[styles.iconContainer, { backgroundColor: color }]}>
+        <Ionicons name={name} size={size} color="#FFF" />
+      </View>
+      <Text style={styles.tabBarLabel}>{label}</Text>
+    </View>
+  );
+}
+
 function AppRoutes(){
   return(
     <QuizProvider>
@@ -90,7 +102,7 @@ function AppRoutes(){
           tabBarStyle: {
             backgroundColor: 'transparent',
             borderTopWidth: 0,
-            height: 70,
+            height: 90,
             position: 'absolute',
             bottom: 16,
             right: 16,
@@ -101,12 +113,11 @@ function AppRoutes(){
           tabBarItemStyle: {
             margin: 6,
             borderRadius: 24,
-            height: 50,
+            height: 70,
           },
-          tabBarActiveTintColor: '#FFF',
-          tabBarInactiveTintColor: '#FFF',
-          tabBarActiveBackgroundColor: '#4B0082',
-          tabBarInactiveBackgroundColor: '#8B008B',
+          tabBarActiveTintColor: '#4B0082',
+          tabBarInactiveTintColor: '#7673FF',
+          tabBarShowLabel: false,
         }}
       >
         <Tab.Screen 
@@ -115,7 +126,12 @@ function AppRoutes(){
           options={{
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="document-text-outline" size={size} color={color} />
+              <CustomTabBarIcon 
+                name="document-text-outline" 
+                color={color} 
+                size={size} 
+                label="Registros"
+              />
             ),
           }}
         />
@@ -125,9 +141,13 @@ function AppRoutes(){
           component={Home}
           options={{
             headerShown: false,
-            tabBarLabel: 'Início',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="home-outline" size={size} color={color} />
+              <CustomTabBarIcon 
+                name="home-outline" 
+                color={color} 
+                size={size} 
+                label="Início"
+              />
             ),
           }}
         />
@@ -137,9 +157,13 @@ function AppRoutes(){
           component={SettingsRoutes}
           options={{
             headerShown: false,
-            tabBarLabel: 'Ajustes',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="settings-outline" size={size} color={color} />
+              <CustomTabBarIcon 
+                name="settings-outline" 
+                color={color} 
+                size={size} 
+                label="Ajustes"
+              />
             ),
           }}
         />
@@ -157,5 +181,24 @@ function AppRoutes(){
     </QuizProvider>
   )
 }
+
+const styles = StyleSheet.create({
+  tabBarItemContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
+  },
+  tabBarLabel: {
+    color: '#4B0082',
+    fontSize: 12,
+  }
+});
 
 export default AppRoutes;

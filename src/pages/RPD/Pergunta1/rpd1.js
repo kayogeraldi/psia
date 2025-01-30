@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   buttonProximo: {
-    backgroundColor: '#3b3dbf'
+    backgroundColor: '#7673FF'
   },
   buttonText: {
     color: '#FFF',
