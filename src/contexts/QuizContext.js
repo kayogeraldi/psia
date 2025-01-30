@@ -70,11 +70,9 @@ export function QuizProvider({ children }) {
 
   const saveQuiz = async () => {
     try {
-      // Pegar registros existentes
       const existingData = await AsyncStorage.getItem('quizRegistros');
       const registros = existingData ? JSON.parse(existingData) : [];
       
-      // Adicionar novo registro
       const novoRegistro = {
         id: Date.now().toString(),
         data: quizData.pergunta1.date,

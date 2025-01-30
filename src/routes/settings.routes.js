@@ -11,6 +11,7 @@ import Pergunta4 from '../pages/RPD/Pergunta4/rpd4';
 import Pergunta5 from '../pages/RPD/Pergunta5/rpd5';
 import Pergunta6 from '../pages/RPD/Pergunta6/rpd6';
 import Pacientes from '../pages/pacientes';
+import Finalizacao from '../pages/RPD/finalizacao/finalizacao';
 const SettingsStack = createNativeStackNavigator();
 
 function SettingsRoutes() {
@@ -84,6 +85,13 @@ function SettingsRoutes() {
         component={Pergunta6}
         options={{
           title: 'Pergunta 6'
+        }}
+      />
+      <SettingsStack.Screen 
+        name="Finalizacao"
+        component={Finalizacao}
+        options={{
+          title: 'Finalização'
         }}
       />
 
