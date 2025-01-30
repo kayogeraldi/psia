@@ -3,17 +3,26 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import RegistroDetailModal from '../../components/RegistroDetailModal';
+import RegistroFiltro from '../../components/RegistroFiltro';
 
 export default function Registros(){
   const [registros, setRegistros] = useState([]);
+  const [registrosFiltrados, setRegistrosFiltrados] = useState([]);
   const [selectedRegistro, setSelectedRegistro] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  
+  const [filtros, setFiltros] = useState({
+    searchText: '',
+    filtroData: null
+  });
 
   const carregarRegistros = async () => {
     try {
       const dados = await AsyncStorage.getItem('quizRegistros');
       if (dados) {
-        setRegistros(JSON.parse(dados));
+        const registrosCarregados = JSON.parse(dados);
+        setRegistros(registrosCarregados);
+        aplicarFiltros(registrosCarregados);
       }
     } catch (error) {
       console.error('Erro ao carregar registros:', error);
@@ -25,6 +34,40 @@ export default function Registros(){
       carregarRegistros();
     }, [])
   );
+
+  const aplicarFiltros = (todosRegistros) => {
+    let filtrados = todosRegistros;
+
+    if (filtros.searchText) {
+      filtrados = filtrados.filter(registro => 
+        registro.titulo.toLowerCase().includes(filtros.searchText.toLowerCase())
+      );
+    }
+
+    if (filtros.filtroData) {
+      filtrados = filtrados.filter(registro => {
+        const registroData = new Date(registro.data);
+        const filtroDataObj = new Date(filtros.filtroData);
+        return (
+          registroData.getDate() === filtroDataObj.getDate() &&
+          registroData.getMonth() === filtroDataObj.getMonth() &&
+          registroData.getFullYear() === filtroDataObj.getFullYear()
+        );
+      });
+    }
+
+    filtrados.sort((a, b) => new Date(b.data) - new Date(a.data));
+    
+    setRegistrosFiltrados(filtrados);
+  };
+
+  useEffect(() => {
+    aplicarFiltros(registros);
+  }, [filtros]);
+
+  const handleFiltroChange = (novosFiltros) => {
+    setFiltros(novosFiltros);
+  };
 
   const handleRegistroPress = (registro) => {
     setSelectedRegistro(registro);
@@ -69,11 +112,23 @@ export default function Registros(){
   return(
     <View style={styles.container}>
       <Text style={styles.title}>Meus Registros</Text>
+      
+      <RegistroFiltro 
+        onFiltroChange={handleFiltroChange}
+        initialSearchText={filtros.searchText}
+        initialFiltroData={filtros.filtroData}
+      />
+
       <FlatList
-        data={registros.sort((a, b) => new Date(b.data) - new Date(a.data))}
+        data={registrosFiltrados}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={
+          <Text style={styles.emptyListText}>
+            Nenhum registro encontrado
+          </Text>
+        }
       />
 
       <RegistroDetailModal
@@ -125,5 +180,12 @@ const styles = StyleSheet.create({
     color: '#333',
     flex: 1,
     marginRight: 10
+  },
+  emptyListText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginTop: 20
   }
 });

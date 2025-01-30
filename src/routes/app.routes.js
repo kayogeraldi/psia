@@ -113,7 +113,7 @@ function AppRoutes(){
           name="Registros" 
           component={Registros}
           options={{
-            tabBarLabel: 'Registros',
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="document-text-outline" size={size} color={color} />
             ),

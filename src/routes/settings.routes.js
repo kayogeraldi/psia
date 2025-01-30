@@ -21,7 +21,7 @@ function SettingsRoutes() {
         name="SettingsMain"
         component={Settings}
         options={{
-          title: 'Ajustes'
+          headerShown: false
         }}
       />
       <SettingsStack.Screen 
