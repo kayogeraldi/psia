@@ -1,15 +1,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Settings from '../pages/Ajustes';
-import Profile from '../pages/Profile';
-import Notifications from '../pages/Notificações';
-import Pergunta1 from '../pages/RPD/Pergunta1';
-import Pergunta2 from '../pages/RPD/Pergunta2';
-import Pergunta3 from '../pages/RPD/Pergunta3';
-import Pergunta4 from '../pages/RPD/Pergunta4';
-import Pergunta5 from '../pages/RPD/Pergunta5';
-import Pergunta6 from '../pages/RPD/Pergunta6';
+import Settings from '../pages/Ajustes/ajustes';
+import Profile from '../pages/Profile/perfil';
+import Notifications from '../pages/Notificações/notificacoes';
+import Pergunta1 from '../pages/RPD/Pergunta1/rpd1';
+import Pergunta2 from '../pages/RPD/Pergunta2/rdp2';
+import Pergunta3 from '../pages/RPD/Pergunta3/rpd3';
+import Pergunta4 from '../pages/RPD/Pergunta4/rpd4';
+import Pergunta5 from '../pages/RPD/Pergunta5/rpd5';
+import Pergunta6 from '../pages/RPD/Pergunta6/rpd6';
 import Pacientes from '../pages/pacientes';
 const SettingsStack = createNativeStackNavigator();
 

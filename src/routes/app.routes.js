@@ -3,15 +3,15 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
-import Home from '../pages/Home';
-import Registros from '../pages/Registros';
+import Home from '../pages/Home/home';
+import Registros from '../pages/Registros/registros';
 import SettingsRoutes from './settings.routes';
-import Pergunta1 from '../pages/RPD/Pergunta1';
-import Pergunta2 from '../pages/RPD/Pergunta2';
-import Pergunta3 from '../pages/RPD/Pergunta3';
-import Pergunta4 from '../pages/RPD/Pergunta4';
-import Pergunta5 from '../pages/RPD/Pergunta5';
-import Pergunta6 from '../pages/RPD/Pergunta6';
+import Pergunta1 from '../pages/RPD/Pergunta1/rpd1';
+import Pergunta2 from '../pages/RPD/Pergunta2/rdp2';
+import Pergunta3 from '../pages/RPD/Pergunta3/rpd3';
+import Pergunta4 from '../pages/RPD/Pergunta4/rpd4';
+import Pergunta5 from '../pages/RPD/Pergunta5/rpd5';
+import Pergunta6 from '../pages/RPD/Pergunta6/rpd6';
 import { QuizProvider } from '../contexts/QuizContext';
 
 const Tab = createBottomTabNavigator();

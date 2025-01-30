@@ -45,6 +45,7 @@ export default function Registros(){
         await AsyncStorage.setItem('quizRegistros', JSON.stringify(novosRegistros));
         setRegistros(novosRegistros);
       }
+
     } catch (error) {
       console.error('Erro ao excluir registro:', error);
       Alert.alert('Erro', 'Não foi possível excluir o registro.');
