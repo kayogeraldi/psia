@@ -11,7 +11,7 @@ export default function Finalizacao(){
   const [confirmSaveModalVisible, setConfirmSaveModalVisible] = useState(false);
   const [titulo, setTitulo] = useState('Sem título');
   const { quizData, updateQuizData, saveQuiz } = useQuiz();
-  const { texto, reavaliacoes } = quizData.pergunta6;
+  const { reavaliacoes } = quizData.pergunta6;
   const humoresAnteriores = quizData.pergunta3.sentimentosList;
 
   const intensidades = Array.from({length: 11}, (_, i) => i.toString());
@@ -31,12 +31,8 @@ export default function Finalizacao(){
     navigation.navigate('Home');
   };
 
-  const handleSaveConfirmation = () => {
-    setConfirmSaveModalVisible(true);
-  };
-
   const handleFinalizar = async () => {
-    const sucesso = await saveQuiz();
+    const sucesso = await saveQuiz(titulo);
     if (sucesso) {
       navigation.navigate('Home');
     } else {
@@ -46,11 +42,14 @@ export default function Finalizacao(){
 
   return(
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={styles.scrollViewContent}
+      >
         <View style={styles.content}>
-          <Text style={styles.title}>Reavaliação do humor</Text>
+          <Text style={styles.title}>Parabéns, você finalizou o RPD!</Text>
           <Text style={styles.subtitle}>
-            Compare seus humores anteriores e reavalie a intensidade atual de cada um
+            Ao salvar você poderá vê-lo na aba "Meus Registros".
           </Text>
 
           <View style={styles.inputContainer}>
@@ -63,39 +62,28 @@ export default function Finalizacao(){
             />
           </View>
 
-          {humoresAnteriores.map((humor, index) => (
-            <View key={index} style={styles.humorCompareContainer}>
-              <View style={styles.humorAnterior}>
-                <Text style={styles.humorLabel}>{humor.sentimento}</Text>
-                <Text style={styles.intensidadeLabel}>Intensidade anterior: {humor.intensidade}</Text>
-              </View>
+          <View style={styles.humoresContainer}> 
+            {humoresAnteriores.map((humor, index) => (
+              <View key={index} style={styles.humorCompareContainer}>
+                <View style={styles.humorAnterior}>
+                  <Text style={styles.humorLabel}>{humor.sentimento}</Text>
+                  <Text style={styles.intensidadeLabel}>Intensidade anterior: {humor.intensidade}</Text>
+                </View>
 
-              <View style={styles.pickerWrapper}>
-                <Text style={styles.intensidadeLabel}>Nova intensidade:</Text>
-                <Picker
-                  selectedValue={reavaliacoes?.[index] || '0'}
-                  onValueChange={(value) => handleIntensidadeChange(value, index)}
-                  style={styles.picker}
-                >
-                  {intensidades.map((num) => (
-                    <Picker.Item key={num} label={num} value={num} />
-                  ))}
-                </Picker>
+                <View style={styles.pickerWrapper}>
+                  <Text style={styles.intensidadeLabel}>Nova intensidade:</Text>
+                  <Picker
+                    selectedValue={reavaliacoes?.[index] || '0'}
+                    onValueChange={(value) => handleIntensidadeChange(value, index)}
+                    style={styles.picker}
+                  >
+                    {intensidades.map((num) => (
+                      <Picker.Item key={num} label={num} value={num} />
+                    ))}
+                  </Picker>
+                </View>
               </View>
-            </View>
-          ))}
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Como você se sente após essa reavaliação?"
-              placeholderTextColor="#999"
-              multiline={true}
-              numberOfLines={4}
-              value={texto}
-              onChangeText={(newText) => updateQuizData('pergunta6', { texto: newText })}
-              textAlignVertical="top"
-            />
+            ))}
           </View>
         </View>
       </ScrollView>
@@ -111,9 +99,9 @@ export default function Finalizacao(){
 
           <TouchableOpacity 
             style={[styles.button, styles.buttonProximo]}
-            onPress={handleSaveConfirmation}
+            onPress={handleFinalizar}
           >
-            <Text style={styles.buttonText}>Finalizar</Text>
+            <Text style={styles.buttonText}>Salvar</Text>
           </TouchableOpacity>
         </View>
 
@@ -132,12 +120,6 @@ export default function Finalizacao(){
         message="Tem certeza que deseja cancelar o quiz?"
       />
 
-      <ConfirmationModal
-        visible={confirmSaveModalVisible}
-        onClose={() => setConfirmSaveModalVisible(false)}
-        onConfirm={handleFinalizar}
-        message="Tem certeza que deseja salvar este registro?"
-      />
     </View>
   )
 }
@@ -150,12 +132,16 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    justifyContent: 'flex-start',
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 40
+  },
+  content: {
+    width: '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20
   },
   title: {
     fontSize: 28,
@@ -269,5 +255,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     marginBottom: 20
+  },
+  humoresContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
 });

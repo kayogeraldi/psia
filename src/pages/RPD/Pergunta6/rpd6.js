@@ -8,7 +8,7 @@ import { useQuiz } from '../../../contexts/QuizContext';
 export default function Pergunta6(){
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const { quizData, updateQuizData, saveQuiz } = useQuiz();
+  const { quizData, updateQuizData } = useQuiz();
   const { texto, reavaliacoes } = quizData.pergunta6;
   const humoresAnteriores = quizData.pergunta3.sentimentosList;
 
@@ -29,14 +29,7 @@ export default function Pergunta6(){
     navigation.navigate('Home');
   };
 
-  const handleFinalizar = async () => {
-    const sucesso = await saveQuiz();
-    if (sucesso) {
-      navigation.navigate('Home');
-    } else {
-      Alert.alert('Erro', 'Não foi possível salvar o registro.');
-    }
-  };
+  
 
   return(
     <View style={styles.container}>
@@ -95,9 +88,9 @@ export default function Pergunta6(){
 
           <TouchableOpacity 
             style={[styles.button, styles.buttonProximo]}
-            onPress={handleFinalizar}
+            onPress={() => navigation.navigate('Finalizacao')}
           >
-            <Text style={styles.buttonText}>Finalizar</Text>
+            <Text style={styles.buttonText}>Próximo </Text>
           </TouchableOpacity>
         </View>
 

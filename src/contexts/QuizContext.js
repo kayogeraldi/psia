@@ -68,13 +68,14 @@ export function QuizProvider({ children }) {
     }));
   };
 
-  const saveQuiz = async () => {
+  const saveQuiz = async (titulo = 'Sem título') => {
     try {
       const existingData = await AsyncStorage.getItem('quizRegistros');
       const registros = existingData ? JSON.parse(existingData) : [];
       
       const novoRegistro = {
         id: Date.now().toString(),
+        titulo: titulo,
         data: quizData.pergunta1.date,
         situacao: quizData.pergunta2.texto,
         sentimentos: quizData.pergunta3.sentimentosList,

@@ -57,16 +57,11 @@ export default function Registros(){
       style={styles.registroCard}
       onPress={() => handleRegistroPress(item)}
     >
-      <Text style={styles.dataText}>{formatarData(item.data)}</Text>
-      <Text style={styles.situacaoText} numberOfLines={2}>
-        {item.situacao}
-      </Text>
-      <View style={styles.sentimentosContainer}>
-        {item.sentimentos.map((sent, index) => (
-          <Text key={index} style={styles.sentimentoTag}>
-            {sent.sentimento} ({sent.intensidade})
-          </Text>
-        ))}
+      <View style={styles.registroCardContent}>
+        <Text style={styles.tituloText} numberOfLines={2}>
+          {item.titulo}
+        </Text>
+        <Text style={styles.dataText}>{formatarData(item.data)}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -114,28 +109,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd'
   },
-  dataText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#3b3dbf',
-    marginBottom: 5
-  },
-  situacaoText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 10
-  },
-  sentimentosContainer: {
+  registroCardContent: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 5
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
-  sentimentoTag: {
-    backgroundColor: '#3b3dbf20',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 15,
-    fontSize: 12,
-    color: '#3b3dbf'
+  dataText: {
+    fontSize: 14,
+    color: '#3b3dbf',
+    textAlign: 'right'
+  },
+  tituloText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    flex: 1,
+    marginRight: 10
   }
 });

@@ -12,6 +12,7 @@ import Pergunta3 from '../pages/RPD/Pergunta3/rpd3';
 import Pergunta4 from '../pages/RPD/Pergunta4/rpd4';
 import Pergunta5 from '../pages/RPD/Pergunta5/rpd5';
 import Pergunta6 from '../pages/RPD/Pergunta6/rpd6';
+import Finalizacao from '../pages/RPD/finalizacao/finalizacao';
 import { QuizProvider } from '../contexts/QuizContext';
 
 const Tab = createBottomTabNavigator();
@@ -66,6 +67,14 @@ function QuizStack() {
         options={{
           headerShown: false,
           title: 'Pergunta 6'
+        }}
+      />
+      <Stack.Screen 
+        name="Finalizacao" 
+        component={Finalizacao}
+        options={{
+          headerShown: false,
+          title: 'Finalização'
         }}
       />
     </Stack.Navigator>
