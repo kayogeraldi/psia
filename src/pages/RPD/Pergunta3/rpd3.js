@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
-import ConfirmationModal from '../../../components/ConfirmationModal';
+import ConfirmationModal from '../../../components/ConfirmationModal/confirmation';
 import { useQuiz } from '../../../contexts/QuizContext';
 
 export default function Pergunta3(){
@@ -151,7 +151,6 @@ export default function Pergunta3(){
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onConfirm={handleConfirmCancel}
-        message="Tem certeza que deseja cancelar o quiz?"
       />
     </View>
   )

@@ -20,7 +20,7 @@ export default function ConfirmationModal({ visible, onClose, onConfirm, message
               style={[styles.button, styles.cancelButton]}
               onPress={onClose}
             >
-              <Text style={styles.buttonText}>Não</Text>
+              <Text style={styles.cancelButtonText}>Não</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
@@ -67,13 +67,20 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   cancelButton: {
-    backgroundColor: '#gray',
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: 'black'
   },
   confirmButton: {
     backgroundColor: '#c62c36',
   },
   buttonText: {
     color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  cancelButtonText: {
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold'
   }

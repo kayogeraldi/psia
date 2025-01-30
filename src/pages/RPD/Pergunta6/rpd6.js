@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
-import ConfirmationModal from '../../../components/ConfirmationModal';
+import ConfirmationModal from '../../../components/ConfirmationModal/confirmation';
 import { useQuiz } from '../../../contexts/QuizContext';
 
 export default function Pergunta6(){
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const { quizData, updateQuizData } = useQuiz();
+  const { quizData, updateQuizData, saveQuiz } = useQuiz();
   const { texto, reavaliacoes } = quizData.pergunta6;
   const humoresAnteriores = quizData.pergunta3.sentimentosList;
 
@@ -28,8 +28,6 @@ export default function Pergunta6(){
     setModalVisible(false);
     navigation.navigate('Home');
   };
-
-  
 
   return(
     <View style={styles.container}>
@@ -90,7 +88,7 @@ export default function Pergunta6(){
             style={[styles.button, styles.buttonProximo]}
             onPress={() => navigation.navigate('Finalizacao')}
           >
-            <Text style={styles.buttonText}>Próximo </Text>
+            <Text style={styles.buttonText}>Finalizar</Text>
           </TouchableOpacity>
         </View>
 
@@ -106,7 +104,6 @@ export default function Pergunta6(){
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onConfirm={handleConfirmCancel}
-        message="Tem certeza que deseja cancelar o quiz?"
       />
     </View>
   )

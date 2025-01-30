@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Checkbox } from 'react-native-paper';  // Se não tiver, instale: npm install react-native-paper
-import ConfirmationModal from '../../../components/ConfirmationModal';
+import { Checkbox } from 'react-native-paper';
+import ConfirmationModal from '../../../components/ConfirmationModal/confirmation';
 import { useQuiz } from '../../../contexts/QuizContext';
 
 export default function Pergunta1(){
@@ -84,16 +84,12 @@ export default function Pergunta1(){
       </View>
 
       <View style={styles.footer}>
-        <View style={styles.buttonRow}>
-          
-
-          <TouchableOpacity 
-            style={[styles.button, styles.buttonProximo]}
-            onPress={() => navigation.navigate('Quiz', { screen: 'Pergunta2' })}
-          >
-            <Text style={styles.buttonText}>Próximo</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity 
+          style={[styles.button, styles.buttonProximo]}
+          onPress={() => navigation.navigate('Quiz', { screen: 'Pergunta2' })}
+        >
+          <Text style={styles.buttonText}>Próximo</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.buttoncancelar}
@@ -109,7 +105,6 @@ export default function Pergunta1(){
         onConfirm={handleConfirmCancel}
         confirmText="Sim"
         cancelText="Não"
-        message="Tem certeza que deseja cancelar o quiz?"
       />
     </View>
   );
@@ -155,7 +150,10 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 30,
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: 15
   },
   title: {
     fontSize: 28,
@@ -163,23 +161,14 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 30
   },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 15
-  },
   button: {
     padding: 15,
     borderRadius: 10,
-    width: '48%',  // deixa um pequeno espaço entre os botões
+    width: '50%',
     alignItems: 'center'
   },
-  buttonVoltar: {
-    backgroundColor: '#808080'  // cor cinza para o botão voltar
-  },
   buttonProximo: {
-    backgroundColor: '#3b3dbf'  // mantém a cor original do botão próximo
+    backgroundColor: '#3b3dbf'
   },
   buttonText: {
     color: '#FFF',

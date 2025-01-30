@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import ConfirmationModal from '../../../components/ConfirmationModal';
+import ConfirmationModal from '../../../components/ConfirmationModal/confirmation';
 import { useQuiz } from '../../../contexts/QuizContext';
 
 export default function Pergunta4(){
@@ -75,7 +75,6 @@ Se o seu pensamento vier em forma de imagem, descreva-a em detalhes
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onConfirm={handleConfirmCancel}
-        message="Tem certeza que deseja cancelar o quiz?"
       />
     </View>
   )
