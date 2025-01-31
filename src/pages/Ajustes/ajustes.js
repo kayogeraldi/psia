@@ -7,12 +7,6 @@ export default function Settings() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => navigation.navigate('Profile')}
-      >
-        <Text style={styles.buttonText}>Perfil</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity 
         style={styles.button} 
@@ -54,7 +48,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#333',
   }
 });

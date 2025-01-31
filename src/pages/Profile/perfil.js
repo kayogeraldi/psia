@@ -81,12 +81,13 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#c62c36',
-    width: '100%',
+    width: '40%',
     height: 50,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 180,
   },
   buttonText: {
     color: '#FFF',

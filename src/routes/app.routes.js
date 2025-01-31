@@ -15,6 +15,7 @@ import Pergunta5 from '../pages/RPD/Pergunta5/rpd5';
 import Pergunta6 from '../pages/RPD/Pergunta6/rpd6';
 import Finalizacao from '../pages/RPD/finalizacao/finalizacao';
 import { QuizProvider } from '../contexts/QuizContext';
+import Profile from '../pages/Profile/perfil';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -177,6 +178,15 @@ function AppRoutes(){
             tabBarStyle: { display: 'none' }  
           }}
         />
+
+        <Tab.Screen 
+          name="Profile" 
+          component={Profile} 
+          options={{ 
+            tabBarStyle: { display: 'none' },
+            tabBarButton: () => null
+          }} 
+        />
       </Tab.Navigator>
     </QuizProvider>
   )
@@ -205,7 +215,7 @@ const styles = StyleSheet.create({
   },
   tabBarLabel: {
     color: '#4B0082',
-    fontSize: 12,
+    fontSize: 16,
   }
 });
 
