@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import Home from '../pages/Home/home';
 import Registros from '../pages/Registros/registros';
@@ -125,7 +125,14 @@ function AppRoutes(){
           name="Registros" 
           component={Registros}
           options={{
-            headerShown: false,
+            headerShown: true,
+            headerTitle: 'Registros',
+            headerStyle: {
+              backgroundColor: '#7673FF',
+            },
+            headerTitleStyle: {
+              color: '#FFFFFF',
+            },
             tabBarIcon: ({ color, size }) => (
               <CustomTabBarIcon 
                 name="document-text-outline" 
@@ -182,10 +189,31 @@ function AppRoutes(){
         <Tab.Screen 
           name="Profile" 
           component={Profile} 
-          options={{ 
+          options={({ navigation }) => ({ 
+            headerShown: true,
+            headerTitle: 'Perfil',
+            headerStyle: {
+              backgroundColor: '#7673FF',
+            },
+            headerTitleStyle: {
+              color: '#FFFFFF',
+            },
+            headerTintColor: '#FFFFFF',
+            headerLeft: () => (
+              <TouchableOpacity 
+                onPress={() => navigation.goBack()}
+                style={{ marginLeft: 10 }}
+              >
+                <Ionicons 
+                  name="arrow-back" 
+                  size={24} 
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+            ),
             tabBarStyle: { display: 'none' },
             tabBarButton: () => null
-          }} 
+          })} 
         />
       </Tab.Navigator>
     </QuizProvider>

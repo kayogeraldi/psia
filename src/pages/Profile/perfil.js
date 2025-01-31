@@ -80,14 +80,16 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   button: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
     backgroundColor: '#c62c36',
-    width: '40%',
     height: 50,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 180,
   },
   buttonText: {
     color: '#FFF',
