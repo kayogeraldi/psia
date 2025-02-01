@@ -1,4 +1,4 @@
-import UserEntity from './UserEntity';
+import UserEntity from "./userEntity";
 
 class AuthEntity {
   constructor({ token, usuario }) {
