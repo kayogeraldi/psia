@@ -145,12 +145,7 @@ export default function Registros() {
       {registros.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Nenhum registro encontrado</Text>
-          <TouchableOpacity 
-            style={styles.novoRegistroButton}
-            onPress={() => navigation.navigate('Quiz', { screen: 'Pergunta1' })}
-          >
-            <Text style={styles.novoRegistroButtonText}>Criar Novo Registro</Text>
-          </TouchableOpacity>
+          
         </View>
       ) : (
         <FlatList
