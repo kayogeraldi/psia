@@ -1,20 +1,28 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import HomeContent from './HomeContent';
-import HomeContentPsi from './homeContentPsi';
 
-export default function Home({ user }){
-  const navigation = useNavigation();
+export default function HomeContentPsi({ navigation }){
+  return(
+    <View style={styles.container}>
+      <TouchableOpacity 
+        style={styles.profileIcon} 
+        onPress={() => navigation.navigate('Profile')}
+      >
+        <Icon name="person-circle" size={40} color="#7673FF" />
+      </TouchableOpacity>
 
-  return (
-    user?.role === 'PSICOLOGO' 
-      ? <HomeContentPsi navigation={navigation} /> 
-      : <HomeContent navigation={navigation} />
+      <Text style={styles.title}>Bem-vindo, Psicólogo!</Text>
+      
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => navigation.navigate('PsicologoDashboard')}
+      >
+        <Text style={styles.buttonText}>Ver Dashboard</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
-//7673FF
 
 const styles = StyleSheet.create({
   container: {
@@ -46,4 +54,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold'
   }
-});
+}); 

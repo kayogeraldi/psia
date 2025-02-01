@@ -45,7 +45,7 @@ export default function Profile() {
         {user?.role === 'PSICOLOGO' ? (
           <View style={styles.infoRow}>
             <Feather name="award" size={20} color="#333" />
-            <Text style={styles.infoText}>CRM: {user?.crm || 'Não informado'}</Text>
+            <Text style={styles.infoText}>CRM: {user?.psicologo?.crm || 'Não informado'}</Text>
           </View>
         ) : (
           <View style={styles.infoRow}>

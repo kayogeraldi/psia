@@ -1,11 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function HomePsi(){
-  const navigation = useNavigation();
-
+export default function HomeContent({ navigation }){
   return(
     <View style={styles.container}>
       <TouchableOpacity 
@@ -15,13 +12,17 @@ export default function HomePsi(){
         <Icon name="person-circle" size={40} color="#7673FF" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Bem-vindo Psicólogo!</Text>
+      <Text style={styles.title}>Bem-vindo!</Text>
       
-     
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => navigation.navigate('Quiz', { screen: 'Pergunta1' })}
+      >
+        <Text style={styles.buttonText}>Responder RPD</Text>
+      </TouchableOpacity>
     </View>
-  )
+  );
 }
-//7673FF
 
 const styles = StyleSheet.create({
   container: {
@@ -53,4 +54,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold'
   }
-});
+}); 
