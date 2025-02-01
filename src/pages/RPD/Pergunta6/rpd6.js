@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import ConfirmationModal from '../../../components/ConfirmationModal/confirmation';
@@ -45,12 +45,13 @@ export default function Pergunta6(){
                 <Text style={styles.intensidadeLabel}>Intensidade anterior: {humor.intensidade}</Text>
               </View>
 
-              <View style={styles.pickerWrapper}>
+              <View style={[styles.pickerWrapper, Platform.OS === 'ios' && styles.pickerWrapperIOS]}>
                 <Text style={styles.intensidadeLabel}>Nova intensidade:</Text>
                 <Picker
                   selectedValue={reavaliacoes?.[index] || '0'}
                   onValueChange={(value) => handleIntensidadeChange(value, index)}
-                  style={styles.picker}
+                  style={[styles.picker, Platform.OS === 'ios' && styles.pickerIOS]}
+                  itemStyle={Platform.OS === 'ios' ? styles.pickerItemIOS : {}}
                 >
                   {intensidades.map((num) => (
                     <Picker.Item key={num} label={num} value={num} />
@@ -222,9 +223,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     overflow: 'hidden',
+    maxHeight: Platform.OS === 'ios' ? 80 : 80
+  },
+  pickerWrapperIOS: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
   },
   picker: {
-    height: 40,
+    height: Platform.OS === 'ios' ? 40 : 50,
+    width: '100%'
+  },
+  pickerIOS: {
+    height: 120,
     width: '100%',
+    backgroundColor: '#f0f0f0',
+  },
+  pickerItemIOS: {
+    height: 88,
+    fontSize: 16
   },
 });
