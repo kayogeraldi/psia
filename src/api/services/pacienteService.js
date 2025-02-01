@@ -51,8 +51,21 @@ const PacienteService = {
 
   // Novo método para buscar por critério
   buscarPorCriterio: async (filtro) => {
-    const response = await apiClient.post('/api/v1/paciente/pesquisa', filtro);
-    return response.data.map((paciente) => new PacienteEntity(paciente));
+    try {
+      const response = await apiClient.post('/api/v1/paciente/pesquisa', filtro);
+      
+      if (!response.data) {
+        console.error('Resposta vazia da API');
+        return [];
+      }
+      
+      return response.data.map(paciente => {
+        return new PacienteEntity(paciente);
+      });
+    } catch (error) {
+      console.error('Erro no buscarPorCriterio:', error);
+      throw error;
+    }
   },
 };
 

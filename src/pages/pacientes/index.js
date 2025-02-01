@@ -1,99 +1,214 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Alert, Modal } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
-import RegistroDetailModal from '../../components/RegistroDetailModal'; // Ajuste o caminho conforme necessário
+import RegistroDetailModal from '../../components/RegistroDetailModal';
+import PacienteService from '../../api/services/pacienteService';
+import UserDB from '../../db/userDB';
 
 export default function Pacientes({ navigation }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  
-  const [pacientes, setPacientes] = useState([
-    { 
-      id: '1', 
-      nome: 'João Silva',
-      ultimaAtualizacao: '2023-12-10T10:30:00Z',
-      temNotificacao: true,
-      registros: [
-        {
-          id: 'r1',
-          data: new Date().toISOString(),
-          situacao: 'Exemplo de situação para João',
-          sentimentos: [
-            { sentimento: 'Ansiedade', intensidade: 7 }
-          ],
-          pensamentosAutomaticos: 'Pensamentos automáticos de exemplo',
-          pensamentosAdaptativos: 'Pensamentos adaptativos de exemplo',
-          reavaliacao: {
-            texto: 'Reavaliação de exemplo',
-            reavaliacoes: [5]
-          }
-        }
-      ]
-    },
-    { 
-      id: '2', 
-      nome: 'Maria Souza',
-      registros: []
-    },
-    { 
-      id: '3', 
-      nome: 'Pedro Santos',
-      registros: []
-    },
-    { 
-      id: '4', 
-      nome: 'Ana Oliveira',
-      registros: []
-    },
-  ]);
+  const [pacientes, setPacientes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filtros, setFiltros] = useState({
+    searchText: '',
+    psicologo: null
+  });
+  const [selectedRpd, setSelectedRpd] = useState(null);
+  const [rpdsModalVisible, setRpdsModalVisible] = useState(false);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
+  useEffect(() => {
+    loadPacientes();
+  }, []);
 
-  const filteredPacientes = pacientes.filter(paciente => 
-    paciente.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const loadPacientes = async () => {
+    try {
+      setLoading(true);
+      const userData = await UserDB.getUserData();
+      const psicologoId = userData?.psicologo?.id;
+      
+      if (!psicologoId) {
+        Alert.alert('Erro', 'ID do psicólogo não encontrado');
+        return;
+      }
 
-  const handlePacientePress = (paciente) => {
-    // Remove a notificação quando o paciente é clicado
-    const updatedPacientes = pacientes.map(p => 
-      p.id === paciente.id ? { ...p, temNotificacao: false } : p
-    );
-    setPacientes(updatedPacientes);
+      setFiltros(prev => ({ ...prev, psicologo: { id: psicologoId } }));
+      
+      const filtro = {
+        psicologo: { id: psicologoId }
+      };
+      
+      if (searchTerm) {
+        filtro.nome = searchTerm;
+      }
 
-    if (paciente.registros && paciente.registros.length > 0) {
-      setSelectedPaciente(paciente.registros[0]);
-      setIsModalVisible(true);
-    } else {
-      alert('Não há registros para este paciente');
+      const response = await PacienteService.buscarPorCriterio(filtro);
+      
+      if (Array.isArray(response)) {
+        setPacientes(response);
+      } else {
+        console.error('Resposta não é um array:', response);
+        setPacientes([]);
+      }
+    } catch (error) {
+      console.error('Erro completo:', error);
+      Alert.alert('Erro', 'Não foi possível carregar os pacientes');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const renderPaciente = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.pacienteItem}
-      onPress={() => handlePacientePress(item)}
-    >
-      <View style={styles.pacienteNomeContainer}>
-        <Text style={styles.pacienteNome}>{item.nome}</Text>
-        <View style={styles.pacienteInfoContainer}>
-          {item.temNotificacao && (
-            <View style={styles.notificationDot} />
-          )}
-          <Text style={styles.ultimaAtualizacaoText}>
-            {formatDate(item.ultimaAtualizacao)}
-          </Text>
+  const handleSearchChange = async (text) => {
+    setSearchTerm(text);
+    try {
+      const filtro = {
+        psicologo: { id: filtros.psicologo.id }
+      };
+
+      if (text) {
+        filtro.nome = text;
+      }
+
+      const response = await PacienteService.buscarPorCriterio(filtro);
+      setPacientes(response);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível realizar a busca');
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    
+    try {
+      const [dataStr] = dateString.split(' ');
+      const [dia, mes, ano] = dataStr.split('-');
+      return `${dia}/${mes}/${ano}`;
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return '';
+    }
+  };
+
+  const handlePacientePress = (paciente) => {
+    if (paciente.historico && paciente.historico.length > 0) {
+      setSelectedPaciente(paciente);
+      setRpdsModalVisible(true);
+    } else {
+      Alert.alert('Aviso', 'Não há registros para este paciente');
+    }
+  };
+
+  const handleRpdPress = (rpd) => {
+    const registroFormatado = {
+      id: rpd.id,
+      data: rpd.dataRpd || rpd.dataHoraCriacao,
+      situacao: rpd.motivos,
+      sentimentos: Object.entries(rpd.sentimentos || {}).map(([sentimento, intensidade]) => ({
+        sentimento,
+        intensidade
+      })),
+      pensamentosAutomaticos: rpd.pensamentosAutomaticos,
+      pensamentosAdaptativos: rpd.pensamentosAdaptativos,
+      reavaliacao: {
+        texto: rpd.reavaliacaoDoHumor,
+        reavaliacoes: []
+      }
+    };
+    setSelectedRpd(registroFormatado);
+    setRpdsModalVisible(false);
+    setIsModalVisible(true);
+  };
+
+  const RpdsModal = ({ visible, onClose, paciente }) => {
+    const formatarData = (data) => {
+      if (!data) return '';
+      try {
+        const [dataStr] = data.split(' ');
+        const [dia, mes, ano] = dataStr.split('-');
+        return `${dia}/${mes}/${ano}`;
+      } catch (error) {
+        return '';
+      }
+    };
+
+    return (
+      <Modal
+        visible={visible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={onClose}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              Registros de {paciente?.usuario?.nome}
+            </Text>
+            
+            <FlatList
+              data={paciente?.historico || []}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity 
+                  style={styles.rpdItem}
+                  onPress={() => handleRpdPress(item)}
+                >
+                  <Text style={styles.rpdData}>
+                    {formatarData(item.dataRpd || item.dataHoraCriacao)}
+                  </Text>
+                  <Text style={styles.rpdMotivo} numberOfLines={2}>
+                    {item.motivos || 'Sem motivo registrado'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>Nenhum registro encontrado</Text>
+              }
+            />
+
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={onClose}
+            >
+              <Text style={styles.closeButtonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+      </Modal>
+    );
+  };
+
+  const renderPaciente = ({ item }) => {
+    return (
+      <TouchableOpacity 
+        style={styles.pacienteItem}
+        onPress={() => handlePacientePress(item)}
+      >
+        <View style={styles.pacienteNomeContainer}>
+          <Text style={styles.pacienteNome}>
+            {item?.usuario?.nome || 'Nome não disponível'}
+          </Text>
+          <View style={styles.pacienteInfoContainer}>
+            {item?.historico?.length > 0 && (
+              <View style={styles.notificationDot} />
+            )}
+            <Text style={styles.ultimaAtualizacaoText}>
+              {formatDate(item?.usuario?.dataNascimento)}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Carregando pacientes...</Text>
       </View>
-    </TouchableOpacity>
-  );
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -103,28 +218,36 @@ export default function Pacientes({ navigation }) {
           style={styles.searchInput}
           placeholder="Buscar pacientes"
           value={searchTerm}
-          onChangeText={setSearchTerm}
+          onChangeText={handleSearchChange}
         />
       </View>
 
-      <FlatList
-        data={filteredPacientes}
-        renderItem={renderPaciente}
-        keyExtractor={item => item.id}
-        ListEmptyComponent={
-          <Text style={styles.emptyListText}>Nenhum paciente encontrado</Text>
-        }
+      {pacientes.length > 0 ? (
+        <FlatList
+          data={pacientes}
+          renderItem={renderPaciente}
+          keyExtractor={item => item?.id?.toString() || Math.random().toString()}
+          ListEmptyComponent={
+            <Text style={styles.emptyListText}>Nenhum paciente encontrado</Text>
+          }
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhum paciente encontrado</Text>
+        </View>
+      )}
+
+      <RpdsModal
+        visible={rpdsModalVisible}
+        onClose={() => setRpdsModalVisible(false)}
+        paciente={selectedPaciente}
       />
 
-      {/* Modal para detalhes do registro */}
       <RegistroDetailModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
-        registro={selectedPaciente}
-        onDelete={() => {
-          // Lógica para deletar registro
-          setIsModalVisible(false);
-        }}
+        registro={selectedRpd}
+        onDelete={() => setIsModalVisible(false)}
       />
 
       <TouchableOpacity 
@@ -213,5 +336,67 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     color: '#666',
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#666',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    padding: 20,
+    width: '90%',
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  rpdItem: {
+    backgroundColor: '#f8f8f8',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  rpdData: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  rpdMotivo: {
+    fontSize: 14,
+    color: '#666',
+  },
+  closeButton: {
+    backgroundColor: '#3b3dbf',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  closeButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 }); 

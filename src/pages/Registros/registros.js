@@ -127,7 +127,7 @@ export default function Registros() {
     }
   };
 
-  const handleDeleteRegistro = (id) => {
+  const handleDeleteRegistro = async (id) => {
     Alert.alert(
       'Confirmar Exclusão',
       'Tem certeza que deseja excluir este registro?',
@@ -141,10 +141,12 @@ export default function Registros() {
           style: 'destructive',
           onPress: async () => {
             try {
-              const updatedRegistros = registros.filter(registro => registro.id !== id);
-              setRegistros(updatedRegistros);
-              await loadRegistros();
+              var response = await RpdService.remover([id]); // API espera um array de IDs
+              setModalVisible(false); // Fecha o modal se estiver aberto
+              await loadRegistros(); // Recarrega a lista
+              Alert.alert('Sucesso', 'Registro excluído com sucesso');
             } catch (error) {
+              console.error('Erro ao excluir registro:', error);
               Alert.alert('Erro', 'Não foi possível excluir o registro');
             }
           }

@@ -17,6 +17,7 @@ import Finalizacao from '../pages/RPD/finalizacao/finalizacao';
 import { QuizProvider } from '../contexts/QuizContext';
 import Profile from '../pages/Profile/perfil';
 import UserDB from '../db/userDB';
+import Pacientes from '../pages/pacientes';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -100,7 +101,6 @@ async function getUser() {
     user = await UserDB.getUserData();
     return user;
   } catch (error) {
-    console.log(error);
   }
 }
 
@@ -135,6 +135,16 @@ function HomeWrapper() {
 }
 
 function AppRoutes(){
+  const [userType, setUserType] = React.useState(null);
+
+  React.useEffect(() => {
+    async function checkUserType() {
+      const userData = await UserDB.getUserData();
+      setUserType(userData?.tipo);
+    }
+    checkUserType();
+  });
+
   return(
     <QuizProvider>
       <Tab.Navigator
@@ -179,10 +189,10 @@ function AppRoutes(){
 
         <Tab.Screen 
           name="Registros" 
-          component={Registros}
+          component={userType === 'PSICOLOGO' ? Pacientes : Registros}
           options={{
             headerShown: true,
-            headerTitle: 'Registros',
+            headerTitle: userType === 'PSICOLOGO' ? 'Pacientes' : 'Registros',
             headerStyle: {
               backgroundColor: '#7673FF',
             },
@@ -194,7 +204,7 @@ function AppRoutes(){
                 name="document-text-outline" 
                 color={color} 
                 size={size} 
-                label="Registros"
+                label={userType === 'PSICOLOGO' ? 'Pacientes' : 'Registros'}
               />
             ),
           }}

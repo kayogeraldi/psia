@@ -35,24 +35,9 @@ const RegistroDetailModal = ({ visible, onClose, registro, onDelete }) => {
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      "Confirmar exclusão",
-      "Tem certeza que deseja excluir este registro?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
-        {
-          text: "Excluir",
-          onPress: () => {
-            onDelete(registro.id);
-            onClose();
-          },
-          style: "destructive"
-        }
-      ]
-    );
+    if (!registro || !registro.id) return;
+    
+    onDelete(registro.id);
   };
 
   return (

@@ -16,7 +16,7 @@ const RpdService = {
 
   // Remover RPDs por lista de IDs
   remover: async (ids) => {
-    await apiClient.delete('/api/v1/rpd', { data: ids });
+    return await apiClient.delete('/api/v1/rpd', { data: ids });
   },
 
   // Buscar RPD por ID
