@@ -5,7 +5,9 @@ import AuthEntity from '../entities/authEntity';
 const AuthService = {
   login: async (email, password) => {
     const response = await apiClient.post('/auth/login', { email, password });
+    console.log('response:', response.data);
     const authData = new AuthEntity(response.data);
+    console.log('authData:', authData);
 
     await UserDB.setAuthData(authData.token, authData.user);
     return authData;
