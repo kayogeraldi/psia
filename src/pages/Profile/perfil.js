@@ -50,7 +50,7 @@ export default function Profile() {
         ) : (
           <View style={styles.infoRow}>
             <Feather name="user" size={20} color="#333" />
-            <Text style={styles.infoText}>Psicólogo: {user?.psicologo?.nome || 'Não atribuído'}</Text>
+            <Text style={styles.infoText}>Psicólogo: {user?.paciente.psicologo.usuario.nome || 'Não atribuído'}</Text>
           </View>
         )}
       </View>
