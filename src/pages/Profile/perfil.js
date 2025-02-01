@@ -1,40 +1,58 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
-
-import { AuthContext } from '../../contexts/auth';
+import AuthService from '../../api/services/authServices';
 
 export default function Profile() {
-  const { signOut, user } = useContext(AuthContext);
-  
+  const navigation = useNavigation();
+
+  const handleLogout = async () => {
+    try {
+      // Chama o método de logout do AuthService
+      await AuthService.logout();
+      
+      // Navega de volta para a tela de autenticação
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'AuthRoutes', screen: 'SignIn' }]
+      });
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível fazer logout');
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
         <Image 
-          source={{ uri: user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) }} 
+          source={{ uri: 'https://ui-avatars.com/api/?name=Usuário' }} 
           style={styles.avatar} 
         />
-        <Text style={styles.userName}>{user.name}</Text>
+        <Text style={styles.userName}>Usuário</Text>
       </View>
       
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Feather name="mail" size={20} color="#333" />
-          <Text style={styles.infoText}>{user.email}</Text>
+          <Text style={styles.infoText}>usuario@email.com</Text>
         </View>
         
         <View style={styles.infoRow}>
           <Feather name="phone" size={20} color="#333" />
-          <Text style={styles.infoText}>{user.phone}</Text>
+          <Text style={styles.infoText}>Telefone</Text>
         </View>
         
         <View style={styles.infoRow}>
           <Feather name="user" size={20} color="#333" />
-          <Text style={styles.infoText}>Psicólogo: {user.psicologo}</Text>
+          <Text style={styles.infoText}>Psicólogo: Nome do Psicólogo</Text>
         </View>
       </View>
       
-      <TouchableOpacity style={styles.button} onPress={() => signOut()}>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={handleLogout}
+      >
         <Feather name="log-out" size={22} color="#FFF" />
         <Text style={styles.buttonText}>Sair</Text>
       </TouchableOpacity>

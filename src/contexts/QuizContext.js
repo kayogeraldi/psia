@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import apiClient from '../api/apiClient';
 
 const QuizContext = createContext({});
 
@@ -70,9 +71,11 @@ export function QuizProvider({ children }) {
 
   const saveQuiz = async (titulo = 'Sem título') => {
     try {
+      // Busca os registros existentes
       const existingData = await AsyncStorage.getItem('quizRegistros');
       const registros = existingData ? JSON.parse(existingData) : [];
       
+      // Cria novo registro
       const novoRegistro = {
         id: Date.now().toString(),
         titulo: titulo,
@@ -87,10 +90,19 @@ export function QuizProvider({ children }) {
         }
       };
       
+      // Salva no AsyncStorage
       registros.push(novoRegistro);
       await AsyncStorage.setItem('quizRegistros', JSON.stringify(registros));
       
-      // Limpar o quiz atual
+      // Tenta salvar no backend
+      try {
+        await apiClient.post('/registros', novoRegistro);
+      } catch (backendError) {
+        console.error('Erro ao salvar registro no backend', backendError);
+        // Opcional: Adicionar lógica de sincronização posterior
+      }
+      
+      // Limpa o quiz atual
       clearQuizData();
       
       return true;
@@ -100,13 +112,30 @@ export function QuizProvider({ children }) {
     }
   };
 
+  const fetchQuizRegistros = async () => {
+    try {
+      // Primeiro, tenta buscar do backend
+      const backendResponse = await apiClient.get('/registros');
+      
+      // Se sucesso, retorna os registros do backend
+      return backendResponse.data;
+    } catch (backendError) {
+      console.error('Erro ao buscar registros do backend', backendError);
+      
+      // Fallback para registros locais
+      const localData = await AsyncStorage.getItem('quizRegistros');
+      return localData ? JSON.parse(localData) : [];
+    }
+  };
+
   return (
     <QuizContext.Provider
       value={{
         quizData,
         updateQuizData,
         clearQuizData,
-        saveQuiz
+        saveQuiz,
+        fetchQuizRegistros
       }}
     >
       {children}

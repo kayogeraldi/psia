@@ -1,4 +1,4 @@
-import apiClient from '../api/apiClient';
+import apiClient from '../apiClient';
 import PsicologoEntity from '../entities/psicologoEntity';
 
 const PsicologoService = {

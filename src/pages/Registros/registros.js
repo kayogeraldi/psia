@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { useQuiz } from '../../contexts/QuizContext';
+import { useNavigation } from '@react-navigation/native';
 import RegistroDetailModal from '../../components/RegistroDetailModal';
 import RegistroFiltro from '../../components/RegistroFiltro';
 
-export default function Registros(){
+export default function Registros() {
   const [registros, setRegistros] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { fetchQuizRegistros } = useQuiz();
+  const navigation = useNavigation();
   const [registrosFiltrados, setRegistrosFiltrados] = useState([]);
   const [selectedRegistro, setSelectedRegistro] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -16,24 +20,22 @@ export default function Registros(){
     filtroData: null
   });
 
-  const carregarRegistros = async () => {
+  useEffect(() => {
+    loadRegistros();
+  }, []);
+
+  const loadRegistros = async () => {
     try {
-      const dados = await AsyncStorage.getItem('quizRegistros');
-      if (dados) {
-        const registrosCarregados = JSON.parse(dados);
-        setRegistros(registrosCarregados);
-        aplicarFiltros(registrosCarregados);
-      }
+      setLoading(true);
+      const fetchedRegistros = await fetchQuizRegistros();
+      setRegistros(fetchedRegistros);
+      aplicarFiltros(fetchedRegistros);
     } catch (error) {
-      console.error('Erro ao carregar registros:', error);
+      Alert.alert('Erro', 'Não foi possível carregar os registros');
+    } finally {
+      setLoading(false);
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      carregarRegistros();
-    }, [])
-  );
 
   const aplicarFiltros = (todosRegistros) => {
     let filtrados = todosRegistros;
@@ -61,10 +63,6 @@ export default function Registros(){
     setRegistrosFiltrados(filtrados);
   };
 
-  useEffect(() => {
-    aplicarFiltros(registros);
-  }, [filtros]);
-
   const handleFiltroChange = (novosFiltros) => {
     setFiltros(novosFiltros);
   };
@@ -78,63 +76,96 @@ export default function Registros(){
     return new Date(data).toLocaleDateString('pt-BR');
   };
 
-  const handleDelete = async (registroId) => {
-    try {
-      const dados = await AsyncStorage.getItem('quizRegistros');
-      if (dados) {
-        const registrosAtuais = JSON.parse(dados);
-        const novosRegistros = registrosAtuais.filter(reg => reg.id !== registroId);
-        
-        await AsyncStorage.setItem('quizRegistros', JSON.stringify(novosRegistros));
-        setRegistros(novosRegistros);
-      }
-
-    } catch (error) {
-      console.error('Erro ao excluir registro:', error);
-      Alert.alert('Erro', 'Não foi possível excluir o registro.');
-    }
+  const handleDeleteRegistro = (id) => {
+    Alert.alert(
+      'Confirmar Exclusão',
+      'Tem certeza que deseja excluir este registro?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const updatedRegistros = registros.filter(registro => registro.id !== id);
+              setRegistros(updatedRegistros);
+              await loadRegistros();
+            } catch (error) {
+              Alert.alert('Erro', 'Não foi possível excluir o registro');
+            }
+          }
+        }
+      ]
+    );
   };
 
-  const renderItem = ({ item }) => (
+  const renderRegistroItem = ({ item }) => (
     <TouchableOpacity 
-      style={styles.registroCard}
-      onPress={() => handleRegistroPress(item)}
+      style={styles.registroItem}
+      onPress={() => {
+        navigation.navigate('RegistroDetalhes', { registro: item });
+      }}
     >
-      <View style={styles.registroCardContent}>
-        <Text style={styles.tituloText} numberOfLines={2}>
-          {item.titulo}
+      <View style={styles.registroContent}>
+        <Text style={styles.registroTitulo}>
+          {item.titulo || 'Registro sem título'}
         </Text>
-        <Text style={styles.dataText}>{formatarData(item.data)}</Text>
+        <Text style={styles.registroData}>
+          {formatarData(item.data)}
+        </Text>
       </View>
+      <TouchableOpacity 
+        onPress={() => handleDeleteRegistro(item.id)}
+        style={styles.deleteButton}
+      >
+        <Ionicons name="trash-outline" size={24} color="#FF6347" />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 
-  return(
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Carregando registros...</Text>
+      </View>
+    );
+  }
+
+  return (
     <View style={styles.container}>
-      
       <RegistroFiltro 
         onFiltroChange={handleFiltroChange}
         initialSearchText={filtros.searchText}
         initialFiltroData={filtros.filtroData}
       />
 
-      <FlatList
-        data={registrosFiltrados}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          <Text style={styles.emptyListText}>
-            Nenhum registro encontrado
-          </Text>
-        }
-      />
+      {registros.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhum registro encontrado</Text>
+          <TouchableOpacity 
+            style={styles.novoRegistroButton}
+            onPress={() => navigation.navigate('Quiz', { screen: 'Pergunta1' })}
+          >
+            <Text style={styles.novoRegistroButtonText}>Criar Novo Registro</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={registrosFiltrados}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderRegistroItem}
+          contentContainerStyle={styles.listContainer}
+        />
+      )}
 
       <RegistroDetailModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         registro={selectedRegistro}
-        onDelete={handleDelete}
+        onDelete={handleDeleteRegistro}
       />
     </View>
   );
@@ -143,48 +174,67 @@ export default function Registros(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
-    padding: 20
+    backgroundColor: '#F5F5F5',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333'
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   listContainer: {
-    paddingBottom: 20
+    padding: 16,
   },
-  registroCard: {
-    backgroundColor: '#f8f8f8',
-    padding: 15,
+  registroItem: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd'
-  },
-  registroCardContent: {
+    padding: 16,
+    marginBottom: 12,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  dataText: {
-    fontSize: 14,
-    color: '#3b3dbf',
-    textAlign: 'right'
-  },
-  tituloText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+  registroContent: {
     flex: 1,
-    marginRight: 10
+    marginRight: 16,
   },
-  emptyListText: {
-    fontSize: 18,
+  registroTitulo: {
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    textAlign: 'center',
-    marginTop: 20
-  }
+  },
+  registroData: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  deleteButton: {
+    padding: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 20,
+  },
+  novoRegistroButton: {
+    backgroundColor: '#4B0082',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+  },
+  novoRegistroButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });

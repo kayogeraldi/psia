@@ -1,4 +1,4 @@
-import apiClient from '../api/apiClient';
+import apiClient from '../apiClient';
 import RoleEntity from '../entities/roleEntity';
 
 const RoleService = {

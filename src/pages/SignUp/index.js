@@ -1,39 +1,59 @@
-import React, {useContext, useState} from 'react';
-import { Platform, ActivityIndicator } from 'react-native';
-import { AreaInput, Background, Title, Container, Input, SubmitButton, SubmitText, Link, LinkText } from '../SignIn/styles';
-import { useNavigation } from '@react-navigation/native';
-
-export {
-  Background, 
-  Container, 
+import React, { useState } from 'react';
+import { Platform, ActivityIndicator, Alert } from 'react-native';
+import { 
   AreaInput, 
+  Background, 
+  Title, 
+  Container, 
   Input, 
+  SubmitButton, 
   SubmitText, 
-  SubmitButton,
-  Link,
-  Title
+  Link, 
+  LinkText 
 } from '../SignIn/styles';
-
-import {AuthContext} from '../../contexts/auth';
+import { useNavigation } from '@react-navigation/native';
+import AuthService from '../../api/services/authServices';
 
 export default function SignUp() {
-
-  const [nome, setNome] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-  const {signUp, loadingAuth} = useContext(AuthContext)
 
-function handleSignUp(){
-  if(nome === '' || email === '' || password === ''){
-    Alert.alert('Preencha todos os campos!')
-    return;
+  async function handleSignUp() {
+    // Validação básica dos campos
+    if (!nome || !email || !password) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Usando o novo AuthService para registro
+      const userData = {
+        name: nome,
+        email: email,
+        password: password
+      };
+
+      await AuthService.register(userData);
+      
+      // Navegação após registro bem-sucedido
+      Alert.alert('Sucesso', 'Conta criada com sucesso!');
+      navigation.navigate('SignIn');
+    } catch (error) {
+      // Tratamento de erro de registro
+      Alert.alert(
+        'Erro', 
+        error.response?.data?.message || 'Erro ao criar conta'
+      );
+    } finally {
+      setLoading(false);
+    }
   }
-  signUp(email, password, nome);
-}
-
-
 
   return(
     <Background>
@@ -41,44 +61,46 @@ function handleSignUp(){
         behavior={Platform.OS === 'ios' ? 'padding' : ''}
         enabled
       >
+        <Title>Conta Paciente</Title>
+        
+        <AreaInput>
+          <Input 
+            placeholder='Nome'
+            value={nome}
+            onChangeText={(text) => setNome(text)}
+          />
+        </AreaInput>
 
-<Title>Conta Paciente</Title>
-      <AreaInput>
-        <Input placeholder='Nome'
-        value = {nome}
-        onChangeText={(text) => setNome(text)}
-         />
-      </AreaInput>
+        <AreaInput>
+          <Input 
+            placeholder='E-mail'
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </AreaInput>
 
-      
-      <AreaInput>
-        <Input placeholder='E-mail'
-          value = {email}
-          onChangeText={(text) => setEmail(text)}
-         />
-      </AreaInput>
+        <AreaInput>
+          <Input 
+            placeholder='Senha'
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry={true}
+          />
+        </AreaInput>
 
-      <AreaInput>
-        <Input placeholder='Senha'
-          value = {password}
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry= {true}
-         />
-      </AreaInput>
+        <SubmitButton onPress={handleSignUp}>
+          {loading ? (
+            <ActivityIndicator size={25} color="#fff" />
+          ) : (
+            <SubmitText>Cadastrar</SubmitText>
+          )}
+        </SubmitButton>
 
-      <SubmitButton onPress={handleSignUp}>
-        {loadingAuth ? (
-          <ActivityIndicator size={25} color="#fff" />
-        ) : (
-          <SubmitText>Cadastrar</SubmitText>
-        )}
-      </SubmitButton>
-
-
-      <Link onPress={() => navigation.navigate('SignUpPsi')}>
-        <LinkText>Criar conta Psicólogo</LinkText>
-      </Link>
-
+        <Link onPress={() => navigation.navigate('SignUpPsi')}>
+          <LinkText>Criar conta Psicólogo</LinkText>
+        </Link>
       </Container>
     </Background>
   );

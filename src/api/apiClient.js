@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiClient = axios.create({
-  baseURL: 'https://firesamurai.fun:9091/auth',
+  baseURL: 'http://firesamurai.fun:9091',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
