@@ -34,7 +34,7 @@ export default function SignIn(){
         enabled
       >
         <Logo
-          source={require('../../assets/logo.png')}
+          source={require('../../assets/1.png')}
         />
 
         <AreaInput>
