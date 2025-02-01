@@ -208,24 +208,34 @@ export default function Registros() {
 
   return (
     <View style={styles.container}>
-      <RegistroFiltro 
-        onFiltroChange={handleFiltroChange}
-        initialSearchText={filtros.searchText}
-        initialFiltroData={filtros.filtroData}
-      />
-
-      {registros.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Nenhum registro encontrado</Text>
-          
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando registros...</Text>
         </View>
       ) : (
-        <FlatList
-          data={registrosFiltrados}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderRegistroItem}
-          contentContainerStyle={styles.listContainer}
-        />
+        <>
+          <View style={styles.filterContainer}>
+            <RegistroFiltro 
+              onFiltroChange={handleFiltroChange}
+              initialSearchText={filtros.searchText}
+              initialFiltroData={filtros.filtroData}
+            />
+          </View>
+
+          {registros.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhum registro encontrado</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={registrosFiltrados}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderRegistroItem}
+              contentContainerStyle={styles.listContainer}
+              ListHeaderComponent={<View style={styles.listHeaderSpace} />}
+            />
+          )}
+        </>
       )}
 
       <RegistroDetailModal
@@ -243,13 +253,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
+  filterContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   listContainer: {
-    padding: 16,
+    paddingHorizontal: 16,
+  },
+  listHeaderSpace: {
+    height: 12,
   },
   registroItem: {
     backgroundColor: '#FFFFFF',
