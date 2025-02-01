@@ -5,7 +5,7 @@ import AuthService from '../../api/services/authServices';
 import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Profile() {
-  const { setIsAuthenticated, setUser } = useContext(AuthContext);
+  const { setIsAuthenticated, setUser, user } = useContext(AuthContext);
 
   const handleLogout = async () => {
     try {
@@ -25,27 +25,34 @@ export default function Profile() {
     <View style={styles.container}>
       <View style={styles.profileHeader}>
         <Image 
-          source={{ uri: 'https://ui-avatars.com/api/?name=Usuário' }} 
+          source={{ uri: `https://ui-avatars.com/api/?name=${user?.nome || 'Usuário'}` }} 
           style={styles.avatar} 
         />
-        <Text style={styles.userName}>Usuário</Text>
+        <Text style={styles.userName}>{user?.nome || 'Usuário'}</Text>
       </View>
       
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Feather name="mail" size={20} color="#333" />
-          <Text style={styles.infoText}>usuario@email.com</Text>
+          <Text style={styles.infoText}>{user?.email || 'Email não disponível'}</Text>
         </View>
         
         <View style={styles.infoRow}>
           <Feather name="phone" size={20} color="#333" />
-          <Text style={styles.infoText}>Telefone</Text>
+          <Text style={styles.infoText}>{user?.telefone || 'Telefone não disponível'}</Text>
         </View>
         
-        <View style={styles.infoRow}>
-          <Feather name="user" size={20} color="#333" />
-          <Text style={styles.infoText}>Psicólogo: Nome do Psicólogo</Text>
-        </View>
+        {user?.role === 'PSICOLOGO' ? (
+          <View style={styles.infoRow}>
+            <Feather name="award" size={20} color="#333" />
+            <Text style={styles.infoText}>CRM: {user?.crm || 'Não informado'}</Text>
+          </View>
+        ) : (
+          <View style={styles.infoRow}>
+            <Feather name="user" size={20} color="#333" />
+            <Text style={styles.infoText}>Psicólogo: {user?.psicologo?.nome || 'Não atribuído'}</Text>
+          </View>
+        )}
       </View>
       
       <TouchableOpacity 
