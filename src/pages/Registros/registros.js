@@ -5,6 +5,8 @@ import { useQuiz } from '../../contexts/QuizContext';
 import { useNavigation } from '@react-navigation/native';
 import RegistroDetailModal from '../../components/RegistroDetailModal';
 import RegistroFiltro from '../../components/RegistroFiltro';
+import UserDB from '../../db/userDB';
+import RpdService from '../../api/services/rpdService';
 
 export default function Registros() {
   const [registros, setRegistros] = useState([]);
@@ -17,7 +19,8 @@ export default function Registros() {
 
   const [filtros, setFiltros] = useState({
     searchText: '',
-    filtroData: null
+    filtroData: null,
+    pacienteId: null
   });
 
   useEffect(() => {
@@ -27,10 +30,36 @@ export default function Registros() {
   const loadRegistros = async () => {
     try {
       setLoading(true);
-      const fetchedRegistros = await fetchQuizRegistros();
-      setRegistros(fetchedRegistros);
-      aplicarFiltros(fetchedRegistros);
+      const userData = await UserDB.getUserData();
+      const pacienteId = userData?.paciente?.id;
+      
+      if (!pacienteId) {
+        Alert.alert('Erro', 'ID do paciente não encontrado');
+        return;
+      }
+
+      setFiltros(prev => ({ ...prev, pacienteId }));
+      
+      const filtro = {
+        paciente: { id: pacienteId }
+      };
+      
+      if (filtros.searchText) {
+        filtro.titulo = filtros.searchText;
+      }
+
+      const response = await RpdService.listarComPaginacao(
+        0,      // página
+        100,    // tamanho
+        'data', // campoOrdem
+        'desc', // direcaoOrdem
+        filtro  // filtro no body
+      );
+      
+      setRegistros(response.content);
+      aplicarFiltros(response.content);
     } catch (error) {
+      console.error(error);
       Alert.alert('Erro', 'Não foi possível carregar os registros');
     } finally {
       setLoading(false);
@@ -63,8 +92,32 @@ export default function Registros() {
     setRegistrosFiltrados(filtrados);
   };
 
-  const handleFiltroChange = (novosFiltros) => {
-    setFiltros(novosFiltros);
+  const handleFiltroChange = async (novosFiltros) => {
+    setFiltros(prev => ({ ...prev, ...novosFiltros }));
+    
+    try {
+      const filtro = {
+        paciente: { id: filtros.pacienteId }
+      };
+
+      if (novosFiltros.searchText) {
+        filtro.titulo = novosFiltros.searchText;
+      }
+
+      const response = await RpdService.listarComPaginacao(
+        0,      // página
+        100,    // tamanho
+        'data', // campoOrdem
+        'desc', // direcaoOrdem
+        filtro  // filtro no body
+      );
+      
+      setRegistros(response.content);
+      aplicarFiltros(response.content);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível aplicar os filtros');
+    }
   };
 
   const handleRegistroPress = (registro) => {
