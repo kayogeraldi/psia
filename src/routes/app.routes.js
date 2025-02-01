@@ -122,6 +122,22 @@ function AppRoutes(){
         }}
       >
         <Tab.Screen 
+          name="Home" 
+          component={Home}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <CustomTabBarIcon 
+                name="home-outline" 
+                color={color} 
+                size={size} 
+                label="Início"
+              />
+            ),
+          }}
+        />
+
+        <Tab.Screen 
           name="Registros" 
           component={Registros}
           options={{
@@ -139,22 +155,6 @@ function AppRoutes(){
                 color={color} 
                 size={size} 
                 label="Registros"
-              />
-            ),
-          }}
-        />
-        
-        <Tab.Screen 
-          name="Home" 
-          component={Home}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <CustomTabBarIcon 
-                name="home-outline" 
-                color={color} 
-                size={size} 
-                label="Início"
               />
             ),
           }}
