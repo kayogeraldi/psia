@@ -3,52 +3,62 @@ import { Platform, ActivityIndicator, Alert } from 'react-native';
 import { 
   AreaInput, 
   Background, 
-  Title, 
   Container, 
   Input, 
   SubmitButton, 
   SubmitText, 
-  Link, 
+  Title,
+  Link,
   LinkText 
 } from '../SignIn/styles';
 import { useNavigation } from '@react-navigation/native';
 import AuthService from '../../api/services/authServices';
+import { TextInputMask } from 'react-native-masked-text';
 
 export default function SignUp() {
+  const navigation = useNavigation();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [psicologoEmail, setPsicologoEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const navigation = useNavigation();
-
-  async function handleSignUp() {
+  const handleSignUp = async () => {
     // Validação básica dos campos
-    if (!nome || !email || !password) {
+    if (!nome || !email || !password || !dataNascimento || !psicologoEmail) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      return;
+    }
+
+    // Validação do formato dos emails
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || !emailRegex.test(psicologoEmail)) {
+      Alert.alert('Erro', 'Por favor, insira emails válidos');
       return;
     }
 
     try {
       setLoading(true);
       
-      // Usando o novo AuthService para registro
       const userData = {
-        name: nome,
+        nome: nome,
         email: email,
-        password: password
+        password: password,
+        dataNascimento: dataNascimento,
+        isPsicologo: false,
+        role: "PACIENTE",
+        psicologoEmail: psicologoEmail
       };
 
       await AuthService.register(userData);
       
-      // Navegação após registro bem-sucedido
-      Alert.alert('Sucesso', 'Conta criada com sucesso!');
+      Alert.alert('Sucesso', 'Conta de Paciente criada com sucesso!');
       navigation.navigate('SignIn');
     } catch (error) {
-      // Tratamento de erro de registro
       Alert.alert(
         'Erro', 
-        error.response?.data?.message || 'Erro ao criar conta'
+        error.response?.data?.message || 'Erro ao criar conta de Paciente'
       );
     } finally {
       setLoading(false);
@@ -65,7 +75,7 @@ export default function SignUp() {
         
         <AreaInput>
           <Input 
-            placeholder='Nome'
+            placeholder='Nome Completo'
             value={nome}
             onChangeText={(text) => setNome(text)}
           />
@@ -87,6 +97,38 @@ export default function SignUp() {
             value={password}
             onChangeText={(text) => setPassword(text)}
             secureTextEntry={true}
+          />
+        </AreaInput>
+
+        <AreaInput>
+          <TextInputMask
+            style={{
+              width: '90%',
+              height: 50,
+              padding: 10,
+              fontSize: 16,
+              backgroundColor: '#FFF',
+              borderRadius: 8,
+              color: '#121212'
+            }}
+            placeholder='Data de Nascimento'
+            value={dataNascimento}
+            onChangeText={(text) => setDataNascimento(text)}
+            keyboardType='numeric'
+            type={'datetime'}
+            options={{
+              format: 'DD-MM-YYYY'
+            }}
+          />
+        </AreaInput>
+
+        <AreaInput>
+          <Input 
+            placeholder='E-mail do Psicólogo'
+            value={psicologoEmail}
+            onChangeText={(text) => setPsicologoEmail(text)}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
         </AreaInput>
 

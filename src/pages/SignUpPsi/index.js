@@ -30,31 +30,31 @@ export default function SignUpPsi(){
       return;
     }
 
+    // Validação do formato do email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Erro', 'Por favor, insira um email válido');
+      return;
+    }
+
     try {
       setLoading(true);
       
-      // Dados para registro de psicólogo conforme o JSON de exemplo
       const userData = {
         nome: nome,
         email: email,
         password: password,
         dataNascimento: dataNascimento,
-        role: {
-          authority: "PSICOLOGO"
-        },
-        psicologo: {
-          crm: crm
-        }
+        isPsicologo: true,
+        crm: crm,
+        role: "PSICOLOGO"
       };
 
-      // Usando o novo AuthService para registro
       await AuthService.register(userData);
       
-      // Navegação após registro bem-sucedido
       Alert.alert('Sucesso', 'Conta de Psicólogo criada com sucesso!');
       navigation.navigate('SignIn');
     } catch (error) {
-      // Tratamento de erro de registro
       Alert.alert(
         'Erro', 
         error.response?.data?.message || 'Erro ao criar conta de Psicólogo'
@@ -113,13 +113,22 @@ export default function SignUpPsi(){
         </AreaInput>
 
         <AreaInput>
-          <TextInputMask 
-            placeholder='CRM' 
+          <TextInputMask
+            style={{
+              width: '90%',
+              height: 50,
+              padding: 10,
+              fontSize: 16,
+              backgroundColor: '#FFF',
+              borderRadius: 8,
+              color: '#121212'
+            }}
+            placeholder='CRM (000000-XX)'
             value={crm}
             onChangeText={(text) => setCrm(text)}
             type={'custom'}
             options={{
-              mask: '[000000]-[AA]'
+              mask: '999999-SS'
             }}
           />
         </AreaInput>
