@@ -1,12 +1,10 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import AuthService from '../../api/services/authServices';
 import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Profile() {
-  const navigation = useNavigation();
   const { setIsAuthenticated, setUser } = useContext(AuthContext);
 
   const handleLogout = async () => {
@@ -19,7 +17,7 @@ export default function Profile() {
       setUser(null);
       
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível fazer logout');
+      Alert.alert('Erro', `Não foi possível fazer logout ${error}`);
     }
   };
 

@@ -1,5 +1,5 @@
 import apiClient from '../apiClient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserDB from '../../db/userDB';
 import AuthEntity from '../entities/authEntity';
 
 const AuthService = {
@@ -7,8 +7,7 @@ const AuthService = {
     const response = await apiClient.post('/auth/login', { email, password });
     const authData = new AuthEntity(response.data);
 
-    await AsyncStorage.setItem('authToken', authData.token);
-    await AsyncStorage.setItem('userData', JSON.stringify(authData.user));
+    await UserDB.setAuthData(authData.token, authData.user);
     return authData;
   },
 
@@ -19,18 +18,18 @@ const AuthService = {
 
   logout: async () => {
     await apiClient.post('/auth/logout');
-    await AsyncStorage.multiRemove(['authToken', 'userData']);
+    await UserDB.clearAuthData();
   },
 
   checkAuth: async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      const userData = await AsyncStorage.getItem('userData');
+      const token = await UserDB.getAuthToken();
+      const userData = await UserDB.getUserData();
       
       if (token && userData) {
         return {
           isAuthenticated: true,
-          user: JSON.parse(userData)
+          user: userData
         };
       }
       return { isAuthenticated: false, user: null };

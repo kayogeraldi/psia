@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Switch, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserDB from '../../db/userDB';
 
 export default function Notifications() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -25,12 +25,11 @@ export default function Notifications() {
   // Função para carregar as configurações
   const loadSettings = async () => {
     try {
-      const settings = await AsyncStorage.getItem('@notifications_settings');
+      const settings = await UserDB.getNotificationSettings();
       if (settings) {
-        const parsedSettings = JSON.parse(settings);
-        setIsEnabled(parsedSettings.isEnabled);
-        setTime(new Date(parsedSettings.time));
-        setSelectedDays(parsedSettings.selectedDays);
+        setIsEnabled(settings.isEnabled);
+        setTime(new Date(settings.time));
+        setSelectedDays(settings.selectedDays);
       }
     } catch (error) {
       console.error('Erro ao carregar configurações:', error);
@@ -45,7 +44,7 @@ export default function Notifications() {
         time: time.toISOString(),
         selectedDays,
       };
-      await AsyncStorage.setItem('@notifications_settings', JSON.stringify(settings));
+      await UserDB.setNotificationSettings(settings);
     } catch (error) {
       console.error('Erro ao salvar configurações:', error);
     }
