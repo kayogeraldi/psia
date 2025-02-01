@@ -1,26 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import AuthService from '../../api/services/authServices';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Profile() {
   const navigation = useNavigation();
+  const { setIsAuthenticated, setUser } = useContext(AuthContext);
 
   const handleLogout = async () => {
     try {
       // Chama o método de logout do AuthService
       await AuthService.logout();
       
-      // Navega de volta para a tela de autenticação
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'AuthRoutes', screen: 'SignIn' }]
-      });
+      // Atualiza o contexto para refletir que o usuário não está autenticado
+      setIsAuthenticated(false);
+      setUser(null);
+      
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível fazer logout');
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -115,4 +116,4 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: 'bold',
   }
-}); 
+});

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+// src/pages/SignIn/index.js
+import React, { useState, useContext } from 'react';
 import { Platform, ActivityIndicator, Alert } from 'react-native';
-
 import { 
   Background, 
   Container, 
@@ -12,23 +12,18 @@ import {
   Link,
   LinkText
 } from './styles';
-
 import { useNavigation } from '@react-navigation/native';
 import AuthService from '../../api/services/authServices';
+import { AuthContext } from '../../contexts/AuthContext';
 
-export default function SignIn(){
+export default function SignIn() {
   const navigation = useNavigation();
+  const { setIsAuthenticated, setUser } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
-    // Previne o comportamento padrão do formulário
-    if (event) {
-      event.preventDefault();
-    }
-
-    // Validação básica de email e senha
+  const handleSubmit = async () => {
     if (!email || !password) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
@@ -36,40 +31,39 @@ export default function SignIn(){
 
     try {
       setLoading(true);
-      // Usando o AuthService para fazer login
       const authData = await AuthService.login(email, password);
-      
-      // Navegar para a tab de Home
-      navigation.navigate('Quiz', { screen: 'Home' });
+      if (authData && authData.token) {
+        // Atualiza o contexto com a nova autenticação
+        setIsAuthenticated(true);
+        setUser(authData.user);
+      }
     } catch (error) {
-      // Tratamento de erro de login
-      Alert.alert('Erro', error.response?.data?.message || 'Erro ao fazer login');
+      Alert.alert(
+        'Erro', 
+        error.response?.data?.message || 'Erro ao fazer login'
+      );
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  return(
+  return (
     <Background>
-      {/* Envolvendo o conteúdo com um componente de formulário */}
       <Container
         behavior={Platform.OS === 'ios' ? 'padding' : ''}
         enabled
         onSubmit={handleSubmit}
       >
-        <Logo
-          source={require('../../assets/1.png')}
-        />
+        <Logo source={require('../../assets/1.png')} />
 
         <AreaInput>
           <Input
             placeholder="Seu email"
             value={email}
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
             returnKeyType="next"
-            onSubmitEditing={() => {/* Foco no próximo input */}}
           />
         </AreaInput>
 
@@ -77,31 +71,25 @@ export default function SignIn(){
           <Input
             placeholder="Sua senha"
             value={password}
-            onChangeText={(text) => setPassword(text)}
+            onChangeText={setPassword}
             secureTextEntry
             returnKeyType="send"
             onSubmitEditing={handleSubmit}
           />
         </AreaInput>
 
-        <SubmitButton 
-          activeOpacity={0.8} 
-          onPress={handleSubmit}
-        >
-          {
-            loading ? (
-              <ActivityIndicator size={20} color="#FFF" />
-            ) : (
-              <SubmitText>Acessar</SubmitText>
-            ) 
-          }
+        <SubmitButton activeOpacity={0.8} onPress={handleSubmit}>
+          {loading ? (
+            <ActivityIndicator size={20} color="#FFF" />
+          ) : (
+            <SubmitText>Acessar</SubmitText>
+          )}
         </SubmitButton>
 
         <Link onPress={() => navigation.navigate('SignUp')}>
           <LinkText>Criar uma conta!</LinkText>
         </Link>
-
       </Container>
     </Background>
-  )
+  );
 }

@@ -8,6 +8,7 @@ const AuthService = {
     const authData = new AuthEntity(response.data);
 
     await AsyncStorage.setItem('authToken', authData.token);
+    await AsyncStorage.setItem('userData', JSON.stringify(authData.user));
     return authData;
   },
 
@@ -18,7 +19,25 @@ const AuthService = {
 
   logout: async () => {
     await apiClient.post('/auth/logout');
-    await AsyncStorage.removeItem('authToken');
+    await AsyncStorage.multiRemove(['authToken', 'userData']);
+  },
+
+  checkAuth: async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      const userData = await AsyncStorage.getItem('userData');
+      
+      if (token && userData) {
+        return {
+          isAuthenticated: true,
+          user: JSON.parse(userData)
+        };
+      }
+      return { isAuthenticated: false, user: null };
+    } catch (error) {
+      console.error('Erro ao verificar autenticação:', error);
+      return { isAuthenticated: false, user: null };
+    }
   },
 };
 
