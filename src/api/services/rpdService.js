@@ -30,13 +30,29 @@ const RpdService = {
     const response = await apiClient.get('/api/v1/rpd', {
       params: { pagina, tamanho, campoOrdem, direcaoOrdem },
     });
-
     return {
-      rpds: response.data.content.map((rpd) => new RpdEntity(rpd)),
+      content: response.data.content.map((rpd) => new RpdEntity(rpd)),
       totalElements: response.data.totalElements,
-      pageNumber: response.data.pageable.pageNumber,
-      pageSize: response.data.pageable.pageSize,
+      pageable: response.data.pageable,
     };
+  },
+
+  // Novo método para listar com paginação e filtro
+  listarComPaginacao: async (pagina = 0, tamanho = 10, campoOrdem = 'id', direcaoOrdem = 'asc', filtro) => {
+    const response = await apiClient.post('/api/v1/rpd/paginacao', filtro, {
+      params: { pagina, tamanho, campoOrdem, direcaoOrdem },
+    });
+    return {
+      content: response.data.content.map((rpd) => new RpdEntity(rpd)),
+      totalElements: response.data.totalElements,
+      pageable: response.data.pageable,
+    };
+  },
+
+  // Novo método para buscar por critério
+  buscarPorCriterio: async (filtro) => {
+    const response = await apiClient.post('/api/v1/rpd/pesquisa', filtro);
+    return response.data.map((rpd) => new RpdEntity(rpd));
   },
 };
 

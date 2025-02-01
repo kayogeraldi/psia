@@ -30,13 +30,29 @@ const PacienteService = {
     const response = await apiClient.get('/api/v1/paciente', {
       params: { pagina, tamanho, campoOrdem, direcaoOrdem },
     });
-
     return {
-      pacientes: response.data.content.map((paciente) => new PacienteEntity(paciente)),
+      content: response.data.content.map((paciente) => new PacienteEntity(paciente)),
       totalElements: response.data.totalElements,
-      pageNumber: response.data.pageable.pageNumber,
-      pageSize: response.data.pageable.pageSize,
+      pageable: response.data.pageable,
     };
+  },
+
+  // Novo método para listar com paginação e filtro
+  listarComPaginacao: async (pagina = 0, tamanho = 10, campoOrdem = 'id', direcaoOrdem = 'asc', filtro) => {
+    const response = await apiClient.post('/api/v1/paciente/paginacao', filtro, {
+      params: { pagina, tamanho, campoOrdem, direcaoOrdem },
+    });
+    return {
+      content: response.data.content.map((paciente) => new PacienteEntity(paciente)),
+      totalElements: response.data.totalElements,
+      pageable: response.data.pageable,
+    };
+  },
+
+  // Novo método para buscar por critério
+  buscarPorCriterio: async (filtro) => {
+    const response = await apiClient.post('/api/v1/paciente/pesquisa', filtro);
+    return response.data.map((paciente) => new PacienteEntity(paciente));
   },
 };
 

@@ -14,7 +14,7 @@ export default function Registros() {
   const [registrosFiltrados, setRegistrosFiltrados] = useState([]);
   const [selectedRegistro, setSelectedRegistro] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  
+
   const [filtros, setFiltros] = useState({
     searchText: '',
     filtroData: null
