@@ -111,7 +111,6 @@ export default function Registros(){
 
   return(
     <View style={styles.container}>
-      <Text style={styles.title}>Meus Registros</Text>
       
       <RegistroFiltro 
         onFiltroChange={handleFiltroChange}
