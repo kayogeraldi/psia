@@ -14,13 +14,24 @@ const RegistroDetailModal = ({ visible, onClose, registro, onDelete }) => {
   if (!registro) return null;
 
   const formatarData = (data) => {
-    return new Date(data).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!data) return '';
+    
+    try {
+      // Divide a string em data e hora (se houver)
+      const [dataStr, horaStr] = data.split(' ');
+      // Divide a data em dia, mês e ano
+      const [dia, mes, ano] = dataStr.split('-');
+      
+      // Se tiver hora, inclui no formato
+      if (horaStr) {
+        return `${dia}/${mes}/${ano} ${horaStr}`;
+      }
+      
+      return `${dia}/${mes}/${ano}`;
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return '';
+    }
   };
 
   const handleDelete = () => {
@@ -80,10 +91,7 @@ const RegistroDetailModal = ({ visible, onClose, registro, onDelete }) => {
                       {sent.sentimento}
                     </Text>
                     <Text style={styles.intensidadeText}>
-                      Intensidade inicial: {sent.intensidade}
-                      {registro.reavaliacao.reavaliacoes[index] && 
-                        ` → Final: ${registro.reavaliacao.reavaliacoes[index]}`
-                      }
+                      Intensidade: {sent.intensidade}
                     </Text>
                   </View>
                 ))}
