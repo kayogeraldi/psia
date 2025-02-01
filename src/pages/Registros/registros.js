@@ -112,7 +112,19 @@ export default function Registros() {
   };
 
   const formatarData = (data) => {
-    return new Date(data).toLocaleDateString('pt-BR');
+    if (!data) return '';
+    
+    try {
+      // Divide a string em data e hora (se houver)
+      const [dataStr] = data.split(' ');
+      // Divide a data em dia, mês e ano
+      const [dia, mes, ano] = dataStr.split('-');
+      
+      return `${dia}/${mes}/${ano}`;
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return '';
+    }
   };
 
   const handleDeleteRegistro = (id) => {
@@ -145,15 +157,34 @@ export default function Registros() {
     <TouchableOpacity 
       style={styles.registroItem}
       onPress={() => {
-        navigation.navigate('RegistroDetalhes', { registro: item });
+        const registroFormatado = {
+          id: item.id,
+          data: item.dataRpd || item.dataHoraCriacao,
+          situacao: item.motivos,
+          sentimentos: Object.entries(item.sentimentos || {}).map(([sentimento, intensidade]) => ({
+            sentimento,
+            intensidade
+          })),
+          pensamentosAutomaticos: item.pensamentosAutomaticos,
+          pensamentosAdaptativos: item.pensamentosAdaptativos,
+          reavaliacao: {
+            texto: item.reavaliacaoDoHumor,
+            reavaliacoes: []
+          }
+        };
+        
+        handleRegistroPress(registroFormatado);
       }}
     >
       <View style={styles.registroContent}>
         <Text style={styles.registroTitulo}>
-          {item.titulo || 'Registro sem título'}
+          {item.titulo || 'Sem título'}
         </Text>
         <Text style={styles.registroData}>
-          {formatarData(item.data)}
+          {formatarData(item.dataRpd || item.dataHoraCriacao)}
+        </Text>
+        <Text style={styles.registroMotivo} numberOfLines={2}>
+          {item.motivos || 'Sem motivo registrado'}
         </Text>
       </View>
       <TouchableOpacity 
@@ -245,6 +276,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginTop: 4,
+  },
+  registroMotivo: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+    fontStyle: 'italic'
   },
   deleteButton: {
     padding: 8,
