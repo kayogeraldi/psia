@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import AuthService from '../../api/services/authServices';
 import { TextInputMask } from 'react-native-masked-text';
 
+
 export default function SignUpPsi(){
   const navigation = useNavigation();
   const [nome, setNome] = useState('');
@@ -100,25 +101,26 @@ export default function SignUpPsi(){
 
         <AreaInput>
           <TextInputMask
-            type={'datetime'}
-            options={{
-              format: 'DD/MM/YYYY'
-            }}
             placeholder='Data de Nascimento'
             value={dataNascimento}
             onChangeText={(text) => setDataNascimento(text)}
-            customTextInput={Input}
-            customTextInputProps={{
-              keyboardType: 'numeric'
+            keyboardType='numeric'
+            type={'datetime'}
+            options={{
+              format: 'DD-MM-YYYY'
             }}
           />
         </AreaInput>
 
         <AreaInput>
-          <Input 
+          <TextInputMask 
             placeholder='CRM' 
             value={crm}
             onChangeText={(text) => setCrm(text)}
+            type={'custom'}
+            options={{
+              mask: '[000000]-[AA]'
+            }}
           />
         </AreaInput>
 
