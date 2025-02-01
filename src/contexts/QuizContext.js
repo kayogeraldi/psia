@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 import apiClient from '../api/apiClient';
 import UserDB from '../db/userDB';
+import RpdService from '../api/services/rpdService';
 
 const QuizContext = createContext({});
 
@@ -71,34 +72,36 @@ export function QuizProvider({ children }) {
 
   const saveQuiz = async (titulo = 'Sem título') => {
     try {
-      const novoRegistro = {
-        id: Date.now().toString(),
+      // Converte os sentimentos para o formato esperado
+      const sentimentosObj = {};
+      quizData.pergunta3.sentimentosList.forEach(sentimento => {
+        sentimentosObj[sentimento.sentimento.toLowerCase()] = sentimento.intensidade;
+      });
+
+      const novoRpd = [{
         titulo: titulo,
-        data: quizData.pergunta1.date,
-        situacao: quizData.pergunta2.texto,
-        sentimentos: quizData.pergunta3.sentimentosList,
+        motivos: quizData.pergunta2.texto,
+        sentimentos: sentimentosObj,
+        rereavaliacaoDoHumor: quizData.pergunta3.observacoes,
         pensamentosAutomaticos: quizData.pergunta4.texto,
         pensamentosAdaptativos: quizData.pergunta5.texto,
-        reavaliacao: {
-          texto: quizData.pergunta6.texto,
-          reavaliacoes: quizData.pergunta6.reavaliacoes
-        }
-      };
+        reavaliacaoDoHumor: quizData.pergunta6.texto,
+        dataRpd: quizData.pergunta1.date.toLocaleDateString('pt-BR').replace("/", "-").replace("/", "-")
+      }];
       
-      // Salva localmente usando UserDB
-      await UserDB.saveQuizRegistro(novoRegistro);
-      
-      // Tenta salvar no backend
+      // Tenta salvar usando o RpdService
       try {
-        await apiClient.post('/registros', novoRegistro);
+        await RpdService.inserir(novoRpd);
+        clearQuizData();
+        return true;
       } catch (backendError) {
-        console.error('Erro ao salvar registro no backend', backendError);
+        console.error('Erro ao salvar RPD no backend:', backendError);
+        // Salva localmente como fallback
+        await UserDB.saveQuizRegistro(novoRpd[0]);
+        return false;
       }
-      
-      clearQuizData();
-      return true;
     } catch (error) {
-      console.error('Erro ao salvar quiz:', error);
+      console.error('Erro ao salvar RPD:', error);
       return false;
     }
   };

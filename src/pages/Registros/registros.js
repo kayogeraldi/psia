@@ -48,16 +48,9 @@ export default function Registros() {
         filtro.titulo = filtros.searchText;
       }
 
-      const response = await RpdService.listarComPaginacao(
-        0,      // página
-        100,    // tamanho
-        'data', // campoOrdem
-        'desc', // direcaoOrdem
-        filtro  // filtro no body
-      );
-      
-      setRegistros(response.content);
-      aplicarFiltros(response.content);
+      const response = await RpdService.buscarPorCriterio(filtro);
+      setRegistros(response);
+      aplicarFiltros(response);
     } catch (error) {
       console.error(error);
       Alert.alert('Erro', 'Não foi possível carregar os registros');
@@ -104,16 +97,9 @@ export default function Registros() {
         filtro.titulo = novosFiltros.searchText;
       }
 
-      const response = await RpdService.listarComPaginacao(
-        0,      // página
-        100,    // tamanho
-        'data', // campoOrdem
-        'desc', // direcaoOrdem
-        filtro  // filtro no body
-      );
-      
-      setRegistros(response.content);
-      aplicarFiltros(response.content);
+      const response = await RpdService.buscarPorCriterio(filtro);
+      setRegistros(response);
+      aplicarFiltros(response);
     } catch (error) {
       console.error(error);
       Alert.alert('Erro', 'Não foi possível aplicar os filtros');

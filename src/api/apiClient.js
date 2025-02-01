@@ -39,7 +39,11 @@ apiClient.interceptors.response.use(
       } catch (clearError) {
         console.error('Erro ao limpar dados de autenticação:', clearError);
       }
+    } else if (error.response?.status === 400) {
+      console.error('Erro na api:', error.response.data);
     }
+
+
     return Promise.reject(error);
   }
 );

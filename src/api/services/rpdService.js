@@ -39,14 +39,9 @@ const RpdService = {
 
   // Novo método para listar com paginação e filtro
   listarComPaginacao: async (pagina = 0, tamanho = 10, campoOrdem = 'id', direcaoOrdem = 'asc', filtro) => {
-    const queryParams = new URLSearchParams({
-      pagina: pagina,
-      tamanho: tamanho,
-      campoOrdem: campoOrdem,
-      direcaoOrdem: direcaoOrdem
-    }).toString();
-
-    const response = await apiClient.post(`/api/v1/rpd/paginacao?${queryParams}`, filtro);
+    const response = await apiClient.post(`/api/v1/rpd/paginacao`, filtro, {
+      params: { pagina, tamanho, campoOrdem, direcaoOrdem },
+    });
     return {
       content: response.data.content.map((rpd) => new RpdEntity(rpd)),
       totalElements: response.data.totalElements,
