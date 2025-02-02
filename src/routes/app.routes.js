@@ -134,17 +134,38 @@ function HomeWrapper() {
   return <Home user={user} />;
 }
 
-function AppRoutes(){
-  const [userType, setUserType] = React.useState(null);
+function RegistrosWrapper() {
+  const [user, setUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    async function checkUserType() {
-      const userData = await UserDB.getUserData();
-      setUserType(userData?.tipo);
+    async function loadUser() {
+      try {
+        const userData = await getUser();
+        setUser(userData);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
-    checkUserType();
-  });
+    loadUser();
+  }, []);
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#7673FF" />
+      </View>
+    );
+  }
+
+  return <Registros user={user} />;
+}
+
+
+
+function AppRoutes(){
   return(
     <QuizProvider>
       <Tab.Navigator
@@ -189,10 +210,10 @@ function AppRoutes(){
 
         <Tab.Screen 
           name="Registros" 
-          component={userType === 'PSICOLOGO' ? Pacientes : Registros}
+          component={RegistrosWrapper}
           options={{
             headerShown: true,
-            headerTitle: userType === 'PSICOLOGO' ? 'Pacientes' : 'Registros',
+            headerTitle: 'Registros',
             headerStyle: {
               backgroundColor: '#7673FF',
             },
@@ -204,7 +225,7 @@ function AppRoutes(){
                 name="document-text-outline" 
                 color={color} 
                 size={size} 
-                label={userType === 'PSICOLOGO' ? 'Pacientes' : 'Registros'}
+                label="Registros"
               />
             ),
           }}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Modal, 
   View, 
@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Certifique-se de ter instalado: npm install react-native-vector-icons
 
-const RegistroDetailModal = ({ visible, onClose, registro, onDelete }) => {
+const RegistroDetailModal = ({ visible, onClose, registro, onDelete, user }) => {
+  const [isIAModalVisible, setIsIAModalVisible] = useState(false);
+
   if (!registro) return null;
 
   const formatarData = (data) => {
@@ -40,6 +42,14 @@ const RegistroDetailModal = ({ visible, onClose, registro, onDelete }) => {
     onDelete(registro.id);
   };
 
+  const handleIAPress = () => {
+    setIsIAModalVisible(true);
+  };
+
+  const handleIAModalClose = () => {
+    setIsIAModalVisible(false);
+  };
+
   return (
     <Modal
       visible={visible}
@@ -51,13 +61,46 @@ const RegistroDetailModal = ({ visible, onClose, registro, onDelete }) => {
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.dataText}>{formatarData(registro.data)}</Text>
-            <TouchableOpacity 
-              style={styles.deleteButton}
-              onPress={handleDelete}
-            >
-              <Icon name="delete" size={24} color="#c62c36" />
-            </TouchableOpacity>
+            <View style={styles.headerButtons}>
+              <TouchableOpacity 
+                style={styles.iconButton}
+                onPress={handleIAPress}
+              >
+                <Text style={styles.iaButtonText}>IA</Text>
+              </TouchableOpacity>
+              {user?.role === 'PSICOLOGO' && (
+                <TouchableOpacity 
+                  style={styles.iconButton}
+                  onPress={handleDelete}
+                >
+                  <Icon name="delete" size={24} color="#c62c36" />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
+
+          {/* Modal da IA */}
+          <Modal
+            visible={isIAModalVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={handleIAModalClose}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.iaModalContent}>
+                <Text style={styles.iaModalTitle}>Resumo do RPD</Text>
+                <Text style={styles.iaModalText}>
+                  Aqui vai aparecer o texto do resumo gerado pela IA...
+                </Text>
+                <TouchableOpacity 
+                  style={styles.closeButton}
+                  onPress={handleIAModalClose}
+                >
+                  <Text style={styles.closeButtonText}>Fechar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
 
           <ScrollView style={styles.scrollView}>
             <Text style={styles.dataText}>{formatarData(registro.data)}</Text>
@@ -189,7 +232,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  deleteButton: {
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  iconButton: {
     padding: 8,
+  },
+  iaButtonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  iaModalContent: {
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    padding: 20,
+    width: '90%',
+    maxHeight: '60%',
+    elevation: 5,
+  },
+  iaModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#3b3dbf',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  iaModalText: {
+    fontSize: 16,
+    color: '#666',
+    lineHeight: 24,
+    marginBottom: 20,
   },
 }); 

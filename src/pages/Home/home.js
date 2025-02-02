@@ -8,6 +8,8 @@ import HomeContentPsi from './homeContentPsi';
 export default function Home({ user }){
   const navigation = useNavigation();
 
+  console.log('Role do usuário atual (Home):', user?.role);
+
   return (
     user?.role === 'PSICOLOGO' 
       ? <HomeContentPsi navigation={navigation} /> 

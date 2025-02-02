@@ -25,7 +25,7 @@ export default function Settings() {
         <Text style={styles.buttonText}>Ajuda e Suporte</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Pacientes')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Sobre')}>
         <Text style={styles.buttonText}>Sobre</Text>
       </TouchableOpacity>
     </View>
