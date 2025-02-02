@@ -154,9 +154,11 @@ export default function PacientesContent({ navigation }) {
                   style={styles.rpdItem}
                   onPress={() => handleRpdPress(item)}
                 >
+                  
                   <Text style={styles.rpdData}>
                     {formatarData(item.dataRpd || item.dataHoraCriacao)}
                   </Text>
+
                   <Text style={styles.rpdMotivo} numberOfLines={2}>
                     {item.motivos || 'Sem motivo registrado'}
                   </Text>

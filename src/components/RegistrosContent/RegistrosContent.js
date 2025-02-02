@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuiz } from '../../contexts/QuizContext';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import RegistroDetailModal from '../RegistroDetailModal';
 import RegistroFiltro from '../RegistroFiltro';
 import UserDB from '../../db/userDB';
@@ -26,6 +26,12 @@ export default function RegistrosContent() {
     useEffect(() => {
       loadRegistros();
     }, []);
+  
+    useFocusEffect(
+      React.useCallback(() => {
+        loadRegistros();
+      }, [])
+    );
   
     const loadRegistros = async () => {
       try {

@@ -35,6 +35,7 @@ export default function Finalizacao(){
     const sucesso = await saveQuiz(titulo);
     if (sucesso) {
       navigation.navigate('Home');
+      loadRegistros();
     } else {
       Alert.alert('Erro', 'Não foi possível salvar o registro.');
     }
