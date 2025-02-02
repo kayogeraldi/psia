@@ -23,13 +23,13 @@ function AuthRoutes(){
         component={SignUp}
         options={{
           headerStyle:{
-            backgroundColor: '#3b3dbf',
+            backgroundColor: '#7673FF',
             borderBottomWidth: 1,
             borderBottomColor: '#00b94a',
 
           },
           headerTintColor: "#fff",
-          headerTitle: 'Voltar',
+          headerTitle: '',
           headerBackTitleVisible: false,
         }}
       />
@@ -38,13 +38,13 @@ function AuthRoutes(){
         component={SignUpPsi}
         options={{
           headerStyle:{
-            backgroundColor: '#3b3dbf',
+            backgroundColor: '#7673FF',
             borderBottomWidth: 1,
             borderBottomColor: '#00b94a',
 
           },
           headerTintColor: "#fff",
-          headerTitle: 'Voltar',
+          headerTitle: '',
           headerBackTitleVisible: false,
         }}
       />

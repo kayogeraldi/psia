@@ -8,7 +8,7 @@ import RegistroFiltro from '../RegistroFiltro';
 import UserDB from '../../db/userDB';
 import RpdService from '../../api/services/rpdService';
 
-export default function RegistrosContent() {
+export default function RegistrosContent({ user }) {
     const [registros, setRegistros] = useState([]);
     const [loading, setLoading] = useState(true);
     const { fetchQuizRegistros } = useQuiz();
@@ -249,6 +249,7 @@ export default function RegistrosContent() {
           onClose={() => setModalVisible(false)}
           registro={selectedRegistro}
           onDelete={handleDeleteRegistro}
+          user={user}
         />
       </View>
     );

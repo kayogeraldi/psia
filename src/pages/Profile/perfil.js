@@ -25,7 +25,11 @@ export default function Profile() {
     <View style={styles.container}>
       <View style={styles.profileHeader}>
         <Image 
-          source={{ uri: `https://ui-avatars.com/api/?name=${user?.nome || 'Usuário'}` }} 
+          source={
+            user?.role === 'PSICOLOGO' 
+            ? require('../../assets/psicologo.png')
+            : require('../../assets/paciente.png')
+          }
           style={styles.avatar} 
         />
         <Text style={styles.userName}>{user?.nome || 'Usuário'}</Text>

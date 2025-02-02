@@ -41,11 +41,14 @@ export default function SignUp() {
     try {
       setLoading(true);
       
+      // Convertendo o formato da data de DD/MM/AAAA para DD-MM-AAAA
+      const dataFormatada = dataNascimento.replace(/\//g, '-');
+      
       const userData = {
         nome: nome,
         email: email,
         password: password,
-        dataNascimento: dataNascimento,
+        dataNascimento: dataFormatada,
         isPsicologo: false,
         role: "PACIENTE",
         psicologoEmail: psicologoEmail
@@ -109,7 +112,8 @@ export default function SignUp() {
               fontSize: 16,
               backgroundColor: '#FFF',
               borderRadius: 8,
-              color: '#121212'
+              color: '#121212',
+              marginBottom: 15
             }}
             placeholder='Data de Nascimento'
             value={dataNascimento}
@@ -117,7 +121,7 @@ export default function SignUp() {
             keyboardType='numeric'
             type={'datetime'}
             options={{
-              format: 'DD-MM-YYYY'
+              format: 'DD/MM/YYYY'
             }}
           />
         </AreaInput>

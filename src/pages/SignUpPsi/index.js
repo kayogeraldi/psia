@@ -40,11 +40,14 @@ export default function SignUpPsi(){
     try {
       setLoading(true);
       
+      // Convertendo o formato da data de DD/MM/AAAA para DD-MM-AAAA
+      const dataFormatada = dataNascimento.replace(/\//g, '-');
+      
       const userData = {
         nome: nome,
         email: email,
         password: password,
-        dataNascimento: dataNascimento,
+        dataNascimento: dataFormatada,
         isPsicologo: true,
         crm: crm,
         role: "PSICOLOGO"
@@ -101,13 +104,23 @@ export default function SignUpPsi(){
 
         <AreaInput>
           <TextInputMask
+            style={{
+              width: '90%',
+              height: 50,
+              padding: 10,
+              fontSize: 16,
+              backgroundColor: '#FFF',
+              borderRadius: 8,
+              color: '#121212',
+              marginBottom: 15
+            }}
             placeholder='Data de Nascimento'
             value={dataNascimento}
             onChangeText={(text) => setDataNascimento(text)}
             keyboardType='numeric'
             type={'datetime'}
             options={{
-              format: 'DD-MM-YYYY'
+              format: 'DD/MM/YYYY'
             }}
           />
         </AreaInput>

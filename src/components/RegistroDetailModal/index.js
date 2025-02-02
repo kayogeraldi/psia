@@ -13,6 +13,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'; // Certifique-se de 
 const RegistroDetailModal = ({ visible, onClose, registro, onDelete, user }) => {
   const [isIAModalVisible, setIsIAModalVisible] = useState(false);
 
+  console.log('Usuário atual MODAL:', user);
+
   if (!registro) return null;
 
   const formatarData = (data) => {
@@ -60,15 +62,15 @@ const RegistroDetailModal = ({ visible, onClose, registro, onDelete, user }) => 
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.dataText}>{formatarData(registro.data)}</Text>
             <View style={styles.headerButtons}>
-              <TouchableOpacity 
-                style={styles.iconButton}
-                onPress={handleIAPress}
-              >
-                <Text style={styles.iaButtonText}>IA</Text>
-              </TouchableOpacity>
-              {user?.role === 'PSICOLOGO' && (
+              {user?.role === 'PSICOLOGO' ? (
+                <TouchableOpacity 
+                  style={styles.iconButton}
+                  onPress={handleIAPress}
+                >
+                  <Text style={styles.iaButtonText}>IA</Text>
+                </TouchableOpacity>
+              ) : user?.role === 'PACIENTE' && (
                 <TouchableOpacity 
                   style={styles.iconButton}
                   onPress={handleDelete}

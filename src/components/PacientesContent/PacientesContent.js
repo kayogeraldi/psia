@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Alert, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Alert, Modal, Animated } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import RegistroDetailModal from '../RegistroDetailModal';
 import PacienteService from '../../api/services/pacienteService';
 import UserDB from '../../db/userDB';
 
-export default function PacientesContent({ navigation }) {
+export default function PacientesContent({ navigation, user }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -122,6 +122,24 @@ export default function PacientesContent({ navigation }) {
   };
 
   const RpdsModal = ({ visible, onClose, paciente }) => {
+    const [fadeAnim] = useState(new Animated.Value(0));
+
+    useEffect(() => {
+      if (visible) {
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }
+    }, [visible]);
+
     const formatarData = (data) => {
       if (!data) return '';
       try {
@@ -137,10 +155,15 @@ export default function PacientesContent({ navigation }) {
       <Modal
         visible={visible}
         transparent={true}
-        animationType="slide"
+        animationType="none"
         onRequestClose={onClose}
       >
-        <View style={styles.modalOverlay}>
+        <Animated.View style={[
+          styles.modalOverlay,
+          {
+            opacity: fadeAnim,
+          }
+        ]}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
               Registros de {paciente?.usuario?.nome}
@@ -176,7 +199,7 @@ export default function PacientesContent({ navigation }) {
               <Text style={styles.closeButtonText}>Fechar</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
       </Modal>
     );
   };
@@ -250,6 +273,7 @@ export default function PacientesContent({ navigation }) {
         onClose={() => setIsModalVisible(false)}
         registro={selectedRpd}
         onDelete={() => setIsModalVisible(false)}
+        user={user}
       />
 
       {/* <TouchableOpacity 

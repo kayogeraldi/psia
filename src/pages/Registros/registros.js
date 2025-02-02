@@ -10,8 +10,8 @@ export default function Registros({ user }) {
   
   return (
     user?.role === 'PSICOLOGO' 
-      ? <PacientesContent navigation={navigation} /> 
-      : <RegistrosContent navigation={navigation} />
+      ? <PacientesContent navigation={navigation} user={user} /> 
+      : <RegistrosContent navigation={navigation} user={user} />
   );
 }
 //7673FF
