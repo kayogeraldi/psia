@@ -171,7 +171,7 @@ export default function PacientesContent({ navigation, user }) {
             
             <FlatList
               data={paciente?.historico || []}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item) => formatarData(item.dataRpd || item.dataHoraCriacao)}
               renderItem={({ item }) => (
                 <TouchableOpacity 
                   style={styles.rpdItem}
@@ -219,7 +219,7 @@ export default function PacientesContent({ navigation, user }) {
               <View style={styles.notificationDot} />
             )}
             <Text style={styles.ultimaAtualizacaoText}>
-              {formatDate(item?.usuario?.dataNascimento)}
+              {formatDate(item?.historico[0]?.dataRpd || item?.historico[0]?.dataHoraCriacao)}
             </Text>
           </View>
         </View>
