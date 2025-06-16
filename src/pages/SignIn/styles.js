@@ -59,6 +59,6 @@ export const LinkText = styled.Text`
 export const Title = styled.Text`
   font-size: 30px;
   font-weight: bold;
-  color: #3b3dbf;
+  color: #7673FF;
   margin-bottom: 20px;
 `;

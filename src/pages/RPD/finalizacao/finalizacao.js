@@ -35,6 +35,7 @@ export default function Finalizacao(){
     const sucesso = await saveQuiz(titulo);
     if (sucesso) {
       navigation.navigate('Home');
+      loadRegistros();
     } else {
       Alert.alert('Erro', 'Não foi possível salvar o registro.');
     }
@@ -62,29 +63,7 @@ export default function Finalizacao(){
             />
           </View>
 
-          <View style={styles.humoresContainer}> 
-            {humoresAnteriores.map((humor, index) => (
-              <View key={index} style={styles.humorCompareContainer}>
-                <View style={styles.humorAnterior}>
-                  <Text style={styles.humorLabel}>{humor.sentimento}</Text>
-                  <Text style={styles.intensidadeLabel}>Intensidade anterior: {humor.intensidade}</Text>
-                </View>
-
-                <View style={styles.pickerWrapper}>
-                  <Text style={styles.intensidadeLabel}>Nova intensidade:</Text>
-                  <Picker
-                    selectedValue={reavaliacoes?.[index] || '0'}
-                    onValueChange={(value) => handleIntensidadeChange(value, index)}
-                    style={styles.picker}
-                  >
-                    {intensidades.map((num) => (
-                      <Picker.Item key={num} label={num} value={num} />
-                    ))}
-                  </Picker>
-                </View>
-              </View>
-            ))}
-          </View>
+          
         </View>
       </ScrollView>
 

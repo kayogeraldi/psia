@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 import Home from '../pages/Home/home';
 import Registros from '../pages/Registros/registros';
@@ -16,6 +16,8 @@ import Pergunta6 from '../pages/RPD/Pergunta6/rpd6';
 import Finalizacao from '../pages/RPD/finalizacao/finalizacao';
 import { QuizProvider } from '../contexts/QuizContext';
 import Profile from '../pages/Profile/perfil';
+import UserDB from '../db/userDB';
+import Pacientes from '../pages/pacientes';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -94,6 +96,75 @@ function CustomTabBarIcon({ name, color, size, label }) {
   );
 }
 
+async function getUser() {
+  try {
+    user = await UserDB.getUserData();
+    return user;
+  } catch (error) {
+  }
+}
+
+// Primeiro, crie um componente wrapper para o Home
+function HomeWrapper() {
+  const [user, setUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function loadUser() {
+      try {
+        const userData = await getUser();
+        setUser(userData);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadUser();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#7673FF" />
+      </View>
+    );
+  }
+
+  return <Home user={user} />;
+}
+
+function RegistrosWrapper() {
+  const [user, setUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function loadUser() {
+      try {
+        const userData = await getUser();
+        setUser(userData);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadUser();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#7673FF" />
+      </View>
+    );
+  }
+
+  return <Registros user={user} />;
+}
+
+
+
 function AppRoutes(){
   return(
     <QuizProvider>
@@ -122,8 +193,24 @@ function AppRoutes(){
         }}
       >
         <Tab.Screen 
+          name="Home" 
+          component={HomeWrapper}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <CustomTabBarIcon 
+                name="home-outline" 
+                color={color} 
+                size={size} 
+                label="Início"
+              />
+            ),
+          }}
+        />
+
+        <Tab.Screen 
           name="Registros" 
-          component={Registros}
+          component={RegistrosWrapper}
           options={{
             headerShown: true,
             headerTitle: 'Registros',
@@ -139,22 +226,6 @@ function AppRoutes(){
                 color={color} 
                 size={size} 
                 label="Registros"
-              />
-            ),
-          }}
-        />
-        
-        <Tab.Screen 
-          name="Home" 
-          component={Home}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <CustomTabBarIcon 
-                name="home-outline" 
-                color={color} 
-                size={size} 
-                label="Início"
               />
             ),
           }}

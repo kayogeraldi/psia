@@ -2,29 +2,19 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import HomeContent from './HomeContent';
+import HomeContentPsi from './homeContentPsi';
 
-export default function Home(){
+export default function Home({ user }){
   const navigation = useNavigation();
 
-  return(
-    <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.profileIcon} 
-        onPress={() => navigation.navigate('Profile')}
-      >
-        <Icon name="person-circle" size={40} color="#7673FF" />
-      </TouchableOpacity>
+  console.log('Role do usuário atual (Home):', user?.role);
 
-      <Text style={styles.title}>Bem-vindo!</Text>
-      
-      <TouchableOpacity 
-        style={styles.button}
-        onPress={() => navigation.navigate('Quiz', { screen: 'Pergunta1' })}
-      >
-        <Text style={styles.buttonText}>Responder RPD</Text>
-      </TouchableOpacity>
-    </View>
-  )
+  return (
+    user?.role === 'PSICOLOGO' 
+      ? <HomeContentPsi navigation={navigation} /> 
+      : <HomeContent navigation={navigation} />
+  );
 }
 //7673FF
 

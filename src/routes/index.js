@@ -1,24 +1,23 @@
+// src/routes/index.js
 import React, { useContext } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-
-import { AuthContext } from '../contexts/auth';
-
+import { AuthContext } from '../contexts/AuthContext';
 import AuthRoutes from './auth.routes';
 import AppRoutes from './app.routes';
-function Routes(){
-  const { signed, loading } = useContext(AuthContext);
 
+function Routes() {
+  const { isAuthenticated } = useContext(AuthContext);
 
-  if(loading){
-    return(
+  // Enquanto o checkAuth não terminar, isAuthenticated será null
+  if (isAuthenticated === null) {
+    return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#131313" />
+        <ActivityIndicator size="large" color="#7673FF" />
       </View>
-    )
+    );
   }
-  return(
-    signed ? <AppRoutes/> : <AuthRoutes/>
-  )
+
+  return isAuthenticated ? <AppRoutes /> : <AuthRoutes />;
 }
 
 export default Routes;

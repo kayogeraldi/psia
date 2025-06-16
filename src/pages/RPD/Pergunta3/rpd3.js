@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import ConfirmationModal from '../../../components/ConfirmationModal/confirmation';
@@ -23,11 +23,26 @@ export default function Pergunta3(){
 
   const intensidades = Array.from({length: 11}, (_, i) => i.toString());
 
+  const sentimentosComEmoji = [
+    { valor: 'Alegria', emoji: '😊' },
+    { valor: 'Tristeza', emoji: '😢' },
+    { valor: 'Raiva', emoji: '😠' },
+    { valor: 'Medo', emoji: '😨' },
+    { valor: 'Ansiedade', emoji: '😰' },
+    { valor: 'Culpa', emoji: '😣' },
+    { valor: 'Vergonha', emoji: '😳' },
+    { valor: 'Frustração', emoji: '😤' },
+    { valor: 'Solidão', emoji: '😔' },
+    { valor: 'Esperança', emoji: '🤗' }
+  ];
+
   const handleAddSentimento = () => {
     if (selectedSentimento && selectedIntensidade) {
+      const sentimentoSelecionado = sentimentosComEmoji.find(s => s.valor === selectedSentimento);
       const novoSentimento = {
         sentimento: selectedSentimento,
-        intensidade: selectedIntensidade
+        intensidade: selectedIntensidade,
+        emoji: sentimentoSelecionado?.emoji
       };
       
       updateQuizData('pergunta3', {
@@ -65,24 +80,30 @@ export default function Pergunta3(){
           </Text>
           
           <View style={styles.pickerContainer}>
-            <View style={styles.pickerWrapper}>
+            <View style={[styles.pickerWrapper, Platform.OS === 'ios' && styles.pickerWrapperIOS]}>
               <Picker
                 selectedValue={selectedSentimento}
                 onValueChange={(value) => updateQuizData('pergunta3', { selectedSentimento: value })}
-                style={styles.picker}
+                style={[styles.picker, Platform.OS === 'ios' && styles.pickerIOS]}
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItemIOS : {}}
               >
                 <Picker.Item label="Selecione" value="" />
-                {sentimentos.map((sentimento) => (
-                  <Picker.Item key={sentimento} label={sentimento} value={sentimento} />
+                {sentimentosComEmoji.map((item) => (
+                  <Picker.Item 
+                    key={item.valor} 
+                    label={`${item.emoji} ${item.valor}`} 
+                    value={item.valor}
+                  />
                 ))}
               </Picker>
             </View>
 
-            <View style={styles.pickerWrapper}>
+            <View style={[styles.pickerWrapper, Platform.OS === 'ios' && styles.pickerWrapperIOS]}>
               <Picker
                 selectedValue={selectedIntensidade}
                 onValueChange={(value) => updateQuizData('pergunta3', { selectedIntensidade: value })}
-                style={styles.picker}
+                style={[styles.picker, Platform.OS === 'ios' && styles.pickerIOS]}
+                itemStyle={Platform.OS === 'ios' ? styles.pickerItemIOS : {}}
               >
                 {intensidades.map((num) => (
                   <Picker.Item key={num} label={num} value={num} />
@@ -102,7 +123,7 @@ export default function Pergunta3(){
           {sentimentosList.map((item, index) => (
             <View key={index} style={styles.sentimentoItem}>
               <Text style={styles.sentimentoText}>
-                {item.sentimento} - Intensidade: {item.intensidade}
+                {sentimentosComEmoji.find(s => s.valor === item.sentimento)?.emoji} {item.sentimento} - Intensidade: {item.intensidade}
               </Text>
             </View>
           ))}
@@ -249,11 +270,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    maxHeight: Platform.OS === 'ios' ? 80 : 80
+  },
+  pickerWrapperIOS: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
   },
   picker: {
-    height: 50,
+    height: Platform.OS === 'ios' ? 80 : 80,
     width: '100%'
+  },
+  pickerIOS: {
+    height: 120,
+    width: '100%',
+    backgroundColor: '#f0f0f0',
+  },
+  pickerItemIOS: {
+    height: 88,
+    fontSize: 16
   },
   addButton: {
     backgroundColor: '#4CAF50',
@@ -279,6 +314,7 @@ const styles = StyleSheet.create({
   },
   sentimentoText: {
     fontSize: 16,
-    color: '#333'
+    color: '#333',
+    lineHeight: 24
   }
 });

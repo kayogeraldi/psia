@@ -1,40 +1,68 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
-
-import { AuthContext } from '../../contexts/auth';
+import AuthService from '../../api/services/authServices';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Profile() {
-  const { signOut, user } = useContext(AuthContext);
-  
+  const { setIsAuthenticated, setUser, user } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    try {
+      // Chama o método de logout do AuthService
+      await AuthService.logout();
+      
+      // Atualiza o contexto para refletir que o usuário não está autenticado
+      setIsAuthenticated(false);
+      setUser(null);
+      
+    } catch (error) {
+      Alert.alert('Erro', `Não foi possível fazer logout ${error}`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
         <Image 
-          source={{ uri: user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) }} 
+          source={
+            user?.role === 'PSICOLOGO' 
+            ? require('../../assets/psicologo.png')
+            : require('../../assets/paciente.png')
+          }
           style={styles.avatar} 
         />
-        <Text style={styles.userName}>{user.name}</Text>
+        <Text style={styles.userName}>{user?.nome || 'Usuário'}</Text>
       </View>
       
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Feather name="mail" size={20} color="#333" />
-          <Text style={styles.infoText}>{user.email}</Text>
+          <Text style={styles.infoText}>{user?.email || 'Email não disponível'}</Text>
         </View>
         
         <View style={styles.infoRow}>
           <Feather name="phone" size={20} color="#333" />
-          <Text style={styles.infoText}>{user.phone}</Text>
+          <Text style={styles.infoText}>{user?.telefone || 'Telefone não disponível'}</Text>
         </View>
         
-        <View style={styles.infoRow}>
-          <Feather name="user" size={20} color="#333" />
-          <Text style={styles.infoText}>Psicólogo: {user.psicologo}</Text>
-        </View>
+        {user?.role === 'PSICOLOGO' ? (
+          <View style={styles.infoRow}>
+            <Feather name="award" size={20} color="#333" />
+            <Text style={styles.infoText}>CRM: {user?.psicologo?.crm || 'Não informado'}</Text>
+          </View>
+        ) : (
+          <View style={styles.infoRow}>
+            <Feather name="user" size={20} color="#333" />
+            <Text style={styles.infoText}>Psicólogo: {user?.paciente.psicologo.usuario.nome || 'Não atribuído'}</Text>
+          </View>
+        )}
       </View>
       
-      <TouchableOpacity style={styles.button} onPress={() => signOut()}>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={handleLogout}
+      >
         <Feather name="log-out" size={22} color="#FFF" />
         <Text style={styles.buttonText}>Sair</Text>
       </TouchableOpacity>
@@ -97,4 +125,4 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: 'bold',
   }
-}); 
+});
